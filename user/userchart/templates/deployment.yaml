@@ -1,0 +1,144 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+  labels:
+    app: {{ .Values.Label }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.Label }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.Label }}
+    spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
+      securityContext:
+        runAsUser: {{ .Values.UIDD }}
+        runAsGroup: {{ .Values.GIDD }}
+      containers:
+      - name: {{ .Values.ContainerName }}
+        imagePullPolicy: IfNotPresent
+        image: {{ .Values.ContainerImage }} # 可自行更改镜像和版本
+        command: ["bash", "-c", "--"]
+        args: ["while true; do sleep 30; done;"]
+        resources:
+          limits:
+            cpu: {{ .Values.Limits.CPU }} # 最大CPU
+            memory: {{ .Values.Limits.memory }} # 最大内存数目
+            nvidia.com/gpu: {{ .Values.Limits.GPU }} # requesting 1 GPUs
+        volumeMounts:
+        - name: nfshome # 与下面volumes的名字对应
+          mountPath: /root # 本地的挂载点
+        - name: scratch1 # 与下面volumes的名字对应
+          mountPath: /scratch1 # 本地的挂载点
+        - name: scratch2 # 与下面volumes的名字对应
+          mountPath: /scratch2 # 本地的挂载点
+        - name: scratch3 # 与下面volumes的名字对应
+          mountPath: /scratch3 # 本地的挂载点
+        - name: scratch4 # 与下面volumes的名字对应
+          mountPath: /scratch4 # 本地的挂载点
+        - name: gfshome # 与下面volumes的名字对应
+          mountPath: /gfshome # 本地的挂载点
+        - name: gfshare # 与下面volumes的名字对应
+          mountPath: /share # 本地的挂载点
+      volumes:
+      - name: nfshome
+        persistentVolumeClaim:
+          claimName: pvc-nfshome-{{ .Values.NameSpace }}
+      - name: scratch1
+        persistentVolumeClaim:
+          claimName: pvc-rancher-localpath-1-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+      - name: scratch2
+        persistentVolumeClaim:
+          claimName: pvc-rancher-localpath-2-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+      - name: scratch3
+        persistentVolumeClaim:
+          claimName: pvc-rancher-localpath-3-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+      - name: scratch4
+        persistentVolumeClaim:
+          claimName: pvc-rancher-localpath-4-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+      - name: gfshome
+        persistentVolumeClaim:
+          claimName: gfs-sata-pvc-{{ .Values.NameSpace }}
+      - name: gfshare
+        persistentVolumeClaim:
+          claimName: gfs-sata-pvc-share-{{ .Values.NameSpace }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {}
+  labels: 
+    app: {{ .Values.Label }}
+    k8s.kuboard.cn/name: {{ .Values.DeployName }}
+  name: {{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+spec: 
+  ports:
+    - name: {{ .Values.DeployName }}-port
+      port: 22
+      protocol: TCP
+      targetPort: 22
+  selector: 
+    app: {{ .Values.Label }}
+  sessionAffinity: None
+  type: NodePort
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-rancher-localpath-1-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.NVMEStorage }}
+  storageClassName: rancher-local-path
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-rancher-localpath-2-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.NVMEStorage }}
+  storageClassName: rancher-local-path
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-rancher-localpath-3-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.NVMEStorage }}
+  storageClassName: rancher-local-path
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-rancher-localpath-4-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+  namespace: {{ .Values.NameSpace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.NVMEStorage }}
+  storageClassName: rancher-local-path

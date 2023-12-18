@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota-cpu-mem-gpu-pvc
+  namespace: {{ .Values.NameSpace }}
+spec:
+  hard:
+    limits.cpu: '56'
+    limits.memory: 500Gi
+    requests.cpu: '56'
+    requests.memory: 500Gi
+    requests.nvidia.com/gpu: '4'
+    requests.storage: 30T
+
