@@ -11,8 +11,8 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y openssh-server vim curl wget git iputils-ping net-tools && \
     apt-get clean && rm -rf /tmp/* && \
-    service ssh start
-    rmdir /workspace
+    service ssh start \
+    rmdir /workspace \
     ln -s /root/workspace/ /workspace
 
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
