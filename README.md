@@ -104,7 +104,7 @@
 ![](assets/dex_kubectl_run.png)
 
 
-## 用户
+## 使用K8S
 
 在 K8S 集群中，管理员已经为每一位用户创建了与 UID 相同的命名空间（namespace，ns）。用户只在自己的 ns 中具有使用权限，因此所有操作都只能在自己的 ns 中完成。
 
