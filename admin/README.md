@@ -80,7 +80,7 @@
 
 ![](assets/phpLDAPAdmin_user_create_child_entry.png)
 
-2）选择“Generic: User Account”模版类型：
+2）选择【Generic: User Account】模版类型：
 
 ![](assets/phpLDAPAdmin_user_template.png)
 
