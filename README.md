@@ -83,13 +83,13 @@
 
 >注：这里登录要使用 **邮箱地址**，而不是用户名或DN等。
 
-进入kubeconfig信息页面，选择您使用的系统类型
+进入kubeconfig信息页面，选择您使用的系统类型。
 
 请按照您所使用的 kubectl 所在的操作系统进行选择。
 
 ![](assets/dex_token_1.png)
 
-接下来，要按照页面指示的顺序在您运行 kubectl 的命令行运行命令
+接下来，要按照页面指示的顺序在您运行 kubectl 的命令行运行命令。
 
 可以点击每条命令右上的复制图标来将命令复制到粘贴板。
 
@@ -97,7 +97,7 @@
 
 所有指令执行完毕后，即可使用 kubectl 访问K8S中的资源。
 
->注：只能访问系统分配给用户个人ns下的资源，否则会提示缺失相关权限的错误。
+>注：只能访问系统分配给用户个人命名空间（namespace，ns）下的资源，否则会提示缺失相关权限的错误。
 
 以test01用户查看PVC为例，当不指定ns时，会使用默认的 "default" ns，而用户没有这个ns下的权限，所以会提示操作被禁止。指定ns为test01后就可以正常查看资源。
 
@@ -106,7 +106,7 @@
 
 ## 使用K8S
 
-在 K8S 集群中，管理员已经为每一位用户创建了与 UID 相同的命名空间（namespace，ns）。用户只在自己的 ns 中具有使用权限，因此所有操作都只能在自己的 ns 中完成。
+在 K8S 集群中，管理员已经为每一位用户创建了与 UID 相同的命名空间ns。用户只在自己的 ns 中具有使用权限，因此所有操作都只能在自己的 ns 中完成。
 
 用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s，而 helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。本仓库为用户提供了创建计算任务的 helm 模板，只需要将 values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。以本仓库中 test06 用户的 values.yaml 文件为例，在本项目的根路径使用下面的命令就可以创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。
 
