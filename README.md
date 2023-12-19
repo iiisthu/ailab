@@ -19,57 +19,7 @@
 - 您的终端能够安装并正常运行 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)；
 - 您已经获取了访问K8S集群的用户名、用户账号关联邮箱和登录密码。
 
-### 修改账号密码
-
-集群提供了一套简单的LDAP操作界面（即phpLDAPAdmin），用户可以登录上去，查看或修改用户自身信息。
-
-用浏览器访问URL地址 `https://ldap.ai.iiis.co`访问上述操作界面。
-
-首先会进入登录界面：
-
-![](assets/phpldapadmin_user_login.png)
-
-  
-
-点击左侧的【login】按钮，右侧会出现登录页面：
-
-![](assets/phpldapadmin_user_login_2.png)
-
-  
-
-登录此界面要使用用户在LDAP中的DN（Distinguished Name），
-对于名字为张三的同学来说，DN应该为
-
-`cn=San Zhang,ou=Students,ou=People,dc=iiis,dc=co` 。
-
-输入DN和用户密码，点击【Authenticate】按钮即可登录。
-  
-
-登录后，在页面左侧点击用户自己的cn名称（如下图所示），页面右侧即可显示用户信息：
-
-![](assets/phpldapadmin_user_edit_self.png)
-
-  
-
-在右侧用户信息向下翻，可以找到Password栏目，此处可以修改用户密码：
-
-![](assets/phpldapadmin_changepassword.png)
-
-  
-
-填写密码信息后，可以点击密码输入框下面的【Check password...】链接，会弹出对话框，检查输入密码是否正确。
-
-![](assets/phpldapadmin_check_password.png)
-
-  
-
-验证密码正确性后，关闭对话框，可点击【Update Ojbect】按钮，提交更改。会出现确认页面，点击【Update Object】按钮，即修改完成。
-
-![](assets/phpldapadmin_changepw_commit.png)
-
-  
-
-修改完成用户密码后，会退出登录。
+为了确保账号安全，强烈建议大家拿到账号后先 [修改密码](### 修改账号密码)。
 
 ### 配置kubeconfig
 
@@ -148,3 +98,55 @@ values.yaml 文件的内容包括
 - GIDD：使用管理员分配的默认值，不能修改
 
 如果对helm chart功能及语法比较熟悉，也欢迎用户对模板进行修改或定制，并将成果分享给大家。
+
+### 修改账号密码
+
+集群提供了一套简单的LDAP操作界面（即phpLDAPAdmin），用户可以登录上去，查看或修改用户自身信息。
+
+用浏览器访问URL地址 `https://ldap.ai.iiis.co`访问上述操作界面。
+
+首先会进入登录界面：
+
+![](assets/phpldapadmin_user_login.png)
+
+  
+
+点击左侧的【login】按钮，右侧会出现登录页面：
+
+![](assets/phpldapadmin_user_login_2.png)
+
+  
+
+登录此界面要使用用户在LDAP中的DN（Distinguished Name），
+对于名字为张三的同学来说，DN应该为
+
+`cn=San Zhang,ou=Students,ou=People,dc=iiis,dc=co` 。
+
+输入DN和用户密码，点击【Authenticate】按钮即可登录。
+  
+
+登录后，在页面左侧点击用户自己的cn名称（如下图所示），页面右侧即可显示用户信息：
+
+![](assets/phpldapadmin_user_edit_self.png)
+
+  
+
+在右侧用户信息向下翻，可以找到Password栏目，此处可以修改用户密码：
+
+![](assets/phpldapadmin_changepassword.png)
+
+  
+
+填写密码信息后，可以点击密码输入框下面的【Check password...】链接，会弹出对话框，检查输入密码是否正确。
+
+![](assets/phpldapadmin_check_password.png)
+
+  
+
+验证密码正确性后，关闭对话框，可点击【Update Ojbect】按钮，提交更改。会出现确认页面，点击【Update Object】按钮，即修改完成。
+
+![](assets/phpldapadmin_changepw_commit.png)
+
+  
+
+修改完成用户密码后，会退出登录。
