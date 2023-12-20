@@ -72,7 +72,7 @@ helm install test06-pytorch2.1.1 \
 在账号的初始状态，管理员为用户创建好了用于长期保存数据的[持久卷申领（PersistentVolumeClaim，PVC）](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/)。
 - 挂载于容器内`/root`路径的NFS服务的PVC，用于存储文档及代码等小文件；
 - 挂载于容器内`/gfshome`路径GFS的个人存储空间PVC，用于存储模型文件、数据集等大文件；
-- 挂载于容器内`/gfshare`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；
+- 挂载于容器内`/share`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；
 
 临时数据存放在宿主机本地的NVME硬盘中，挂载在容器内的`/scratch1`至`/scratch4`，PVC被删除后里面的数据也会被删除，请一定不要将需要持久化保存的重要数据放在这几个路径。
 
