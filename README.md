@@ -15,7 +15,7 @@
 
 在管理员已经为用户创建好账号的情况下， 用户需要确认是否已经满足下列三个条件
 
-- 您使用的终端可以访问K8S集群；
+- 您使用的终端可以访问K8S集群，[连接集群的方法参考此文档](http://wiki.iiis.systems:9988/w/index.php/VPN_User_Guide)；
 - 您的终端能够安装并正常运行 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)；
 - 您已经获取了访问K8S集群的用户名、用户账号关联邮箱和登录密码。
 
