@@ -179,3 +179,11 @@ $ bash adduser_dir.sh username.txt
 ```
 $ bash deluser_dir.sh username.txt
 ```
+
+### 添加K8S集群管理员
+
+将`admin@admin.com`改为需要被设置为管理员的账号，在master节点或具有最高权限的终端执行下面的命令。
+
+```
+kubectl create clusterrolebinding root-cluster-admin-binding --clusterrole=cluster-admin --user=admin@admin.com
+```

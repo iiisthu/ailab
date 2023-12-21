@@ -139,7 +139,7 @@ values.yaml 文件的内容包括
 
 集群提供了一套简单的密码修改界面，用户可以修改自己账号的密码。
 
-用浏览器访问URL地址 `http://auth.ai.iiis.co` 访问密码修改界面。界面如下图：
+用浏览器访问URL地址 `https://auth.ai.iiis.co` 访问密码修改界面。界面如下图：
 ![](assets/ssp_main_page.png)
 
 在界面上填写用户名（界面上的Login字段）、原密码（Old password字段）、新密码（New password字段），并重复输入一次新密码（Confirm字段），点击【Send】按钮，即可完成账号密码修改。
