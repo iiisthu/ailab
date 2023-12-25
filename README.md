@@ -85,7 +85,7 @@ alias kubectl="kubectl -n test01"  # test01为分配的namespace
 用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s，而 helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。本仓库为用户提供了创建计算任务的 helm 模板，只需要将 values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。以本仓库中 test06 用户的 values.yaml 文件为例，在本项目的根路径使用下面的命令就可以创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。
 
 ```
-helm install test06-pytorch2.1.1 \
+helm install user-test06 \
       --namespace=test06 \
       --values ./user/userchart/values.yaml \
       ./user/userchart
@@ -177,11 +177,7 @@ values.yaml 文件的内容包括
 
 ##### 信任集群 Harbor
 
-自定义镜像需要从 Harbor 拉取，因此我们需要在 Docker 中添加对集群 Harbor 的信任。在Mac下用 Docker Desktop 可以直接在客户端里加入`insecure-registries`项：
-
-![Mac docker config](assets/harbor/mac_docker_config.jpg)
-
-若未使用 Docker Desktop，则在`/etc/docker/daemon.json`中添加（若该文件不存在则创建）：
+自定义镜像需要从 Harbor 拉取，因此我们需要在 Docker 中添加对集群 Harbor 的信任。在Mac下用 Docker Desktop 可以直接在客户端`Docker Engine`里加入`insecure-registries`项，若未使用 Docker Desktop，则在`/etc/docker/daemon.json`中添加（若该文件不存在则创建）：
 
 ```json
 {
@@ -299,7 +295,7 @@ docker tag sample:v0 harbor.ai.iiis.co/zhangsan/sample:v0
 $ docker logout harbor.ai.iiis.co
 Removing login credentials for harbor.ai.iiis.co
 $ docker login harbor.ai.iiis.co
-Username: zhangsan
+Username: zhangsan@iiis.co
 Password:
 Login Succeeded
 ```
