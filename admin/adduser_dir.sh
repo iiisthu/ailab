@@ -22,10 +22,17 @@ do
       --create-namespace \
       --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
       ./adminchart
-    # helm install user-$(echo "$USER" | tr -d '\r') \
-    #   --namespace=$(echo "$USER" | tr -d '\r') \
-    #   --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
-    #   ./userchart
-    sleep 30
+    sleep 10
+    helm install gfshome-$(echo "$USER" | tr -d '\r') \
+      --namespace=$(echo "$USER" | tr -d '\r') \
+      --create-namespace \
+      --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
+      ./gfshomechart
+    sleep 10
+    helm install user-$(echo "$USER" | tr -d '\r') \
+      --namespace=$(echo "$USER" | tr -d '\r') \
+      --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
+      ./userchart
+    sleep 10
   fi
 done < $1
