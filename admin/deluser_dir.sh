@@ -10,6 +10,7 @@ do
     if [ ! -d "./yamls/values_$(echo "$USER" | tr -d '\r').yaml" ];then
       echo "delete delete pods pvcs namespace in k8s"
       helm delete admin-$(echo "$USER" | tr -d '\r') --namespace=$(echo "$USER" | tr -d '\r')
+      helm delete gfshome-$(echo "$USER" | tr -d '\r') --namespace=$(echo "$USER" | tr -d '\r')
       helm delete user-$(echo "$USER" | tr -d '\r')  --namespace=$(echo "$USER" | tr -d '\r')
       kubectl delete namespace $(echo "$USER" | tr -d '\r')
     else

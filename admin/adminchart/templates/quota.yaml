@@ -11,5 +11,5 @@ spec:
     requests.cpu: '56'
     requests.memory: 500Gi
     requests.nvidia.com/gpu: '4'
-    requests.storage: 30T
+    requests.storage: 40T
 

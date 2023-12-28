@@ -71,7 +71,7 @@ metadata:
   name: gfs-sata-pv-share-{{ .Values.NameSpace }} # 修改用户名{{ .Values.NameSpace }}
 spec:
   capacity:
-    storage: 20T # 与下面PVC保持一致避免浪费
+    storage: 15T # 与下面PVC保持一致避免浪费
   accessModes:
   - ReadWriteMany
   glusterfs:
@@ -92,4 +92,4 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: 20T # 与上面PV保持一致避免浪费
+      storage: 15T # 与上面PV保持一致避免浪费

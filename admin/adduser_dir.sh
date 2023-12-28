@@ -9,7 +9,7 @@ do
 
     parallel-ssh -H n02 mkdir -p /gfs-sata/$(echo "$USER" | tr -d '\r')
     
-    yamlfile=`cat ./values.yaml`
+    yamlfile=`cat ../values-template.yaml`
     all_variables="NAMESPACE=$(echo "$USER" | tr -d '\r') EMAIL=$(echo "$EMAIL" | tr -d '\r') UIDD=$(echo "$UIDD" | tr -d '\r') GIDD=$(echo "$GIDD" | tr -d '\r')"
     
     if [ ! -d "./yamls/" ];then
@@ -28,11 +28,11 @@ do
       --create-namespace \
       --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
       ./gfshomechart
-    sleep 10
+    
     helm install user-$(echo "$USER" | tr -d '\r') \
       --namespace=$(echo "$USER" | tr -d '\r') \
       --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
-      ./userchart
-    sleep 10
+      ../user/userchart
+    sleep 20
   fi
 done < $1
