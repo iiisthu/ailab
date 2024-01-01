@@ -71,11 +71,10 @@
 ![](assets/dex_kubectl_run.png)
 
 
-为了避免每次均输入命名空间参数，可以利用`alias`：
+为了避免每次均输入命名空间参数，可以设定默认的`namespace`：
 
 ```bash
-# .bashrc
-alias kubectl="kubectl -n test01"  # test01为分配的namespace
+kubectl config set-context --current --namespace=test01  # test01为分配的namespace
 ```
 
 ## 使用K8S
