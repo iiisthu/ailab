@@ -64,7 +64,7 @@ https://helm.sh/docs/intro/install/#from-script
 
 ![](assets/dex_login.png)
 
-输入邮箱地址和密码即可登录。
+输入你的邮箱地址（用户名@iiis.co）和密码（你上边修改过的密码，与VPN密码相同）即可登录。
 
 >注：这里的邮箱地址是是***用户名@iiis.co***。
 
@@ -75,6 +75,8 @@ https://helm.sh/docs/intro/install/#from-script
 ![](assets/dex_token_1.png)
 
 接下来，要按照页面指示的顺序在您运行 kubectl 的命令行运行命令。
+
+>注：如果你用的是Windows机器，请在Windows Power Shell 下运行这些命令，普通的cmd不识别这种格式的环境变量。
 
 可以点击每条命令右上的复制图标来将命令复制到粘贴板。
 
