@@ -38,6 +38,25 @@
 
 为了确保账号安全，强烈建议大家拿到账号后先 [修改密码](#修改账号密码)。
 
+## 配置集群访问环境
+
+### 安装本地软件
+
+本地电脑至少需要安装以下两个软件。
+
+#### Kubectl
+用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s。
+安装说明在 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+#### Helm
+helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。比较简单的安装方式（Linux上）是使用这个脚本
+https://helm.sh/docs/intro/install/#from-script
+
+推荐安装以下软件：
+* Docker （如果你需要本地构建镜像）。 PC上推荐安装docker desktop，有界面使用更方便。 https://www.docker.com/products/docker-desktop/
+
+* VSCode （本地集成化开发环境，使用K8S更加方便）。
+
 ### 配置kubeconfig
 
 用户基于 kubeconfig 通过命令行方式使用K8S，需要先在自己的终端设备配置好 kubeconfig。利用系统提供的 kubeconfig 信息（包含用户账户和 Token 等信息），可以在自己的终端利用 kubectl 对 K8S 集群中的资源进行访问。本节介绍如何获取和使用 kubeconfig。
@@ -79,7 +98,7 @@ kubectl get pvc
 
 ### 使用默认配置启动计算任务
 
-用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s，而 helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
+本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
 
 ```
 ########### 用户配置 ###########
