@@ -125,10 +125,10 @@ NVMEStorage: 1T            # 申请的本地盘/scratch的大小
 
 ```
 cd user
-helm install test06-lec01 --values ./lec01.yaml ./userchart
+helm install release_name --values ./lec01.yaml ./userchart
 ```
 
-`test06-lec01`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理。`--values ./lec01.yaml`为helm模板的各项变量提供了对应的值（你刚刚设置的），最后`./userchart`是helm模板的路径位置。
+`release_name`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理，例如test06_lec01。`--values ./lec01.yaml`为helm模板的各项变量提供了对应的值（你刚刚设置的），最后`./userchart`是helm模板的路径位置。
 
 之后，可以通过运行 
 ```bash
@@ -165,10 +165,15 @@ kubectl exec -i name_of_the_pod -- bash
 通过下面的命令删除计算任务
 
 ```
-helm delete test06-pytorch2.1.1 --namespace=test06
+helm delete release_name
 ```
+其中，release_name是你创建任务时候输入的第一个参数（release_name)，如果你忘了当时用的什么了，可以用
+```
+helm list
+```
+来列出所有的release。
 
-该命令会自动删除容器和应于`/scratch1`至`/scratch4`的四个临时数据存储PVC，但不会删除长期存储数据的三个PVC。
+helm delete 命令会自动删除容器和应于`/scratch1`至`/scratch4`的四个临时数据存储PVC，但不会删除长期存储数据的三个PVC。
 
 
 ### 定制自己的模板
