@@ -1,0 +1,21 @@
+# Template values for userchart.  DO NOT Edit.  Instead, make a copy and edit the copy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+########### 用户配置 ###########
+EMAIL: username@iiis.co     # 自己的用户名
+NameSpace: username   # 自己的namespace （同用户名）
+UID: 0000          #   设置为注册时收到邮件中的UID，不能填别的
+GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
+
+########### 任务配置 ###########
+DeployName: username-pytorch-lec01     # 任务（deployment）的名字，建议用`UID+任务描述`的格式
+Label: pytorch-lec01              # 任务的标签，建议用`镜像名+任务描述`的格式
+ContainerName: pytorch-lec01      # 容器名，建议用`镜像名+任务描述`的格式
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
+Limits:                     # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请
+  CPU: 8
+  memory: 20Gi
+  GPU: 1
+NVMEStorage: 1T            # 申请的本地盘/scratch的大小
+
