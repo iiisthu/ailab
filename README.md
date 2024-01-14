@@ -62,37 +62,69 @@
 
 ![](assets/dex_token_2.png)
 
-所有指令执行完毕后，即可使用 kubectl 访问K8S中的资源。
-
->注：只能访问系统分配给用户个人命名空间（namespace，ns）下的资源，否则会提示缺失相关权限的错误。
-
-以test01用户查看PVC为例，当不指定ns时，会使用默认的 "default" ns，而用户没有这个ns下的权限，所以会提示操作被禁止。指定ns为test01后就可以正常查看资源。
-
-![](assets/dex_kubectl_run.png)
-
-
-为了避免每次均输入命名空间参数，可以设定默认的`namespace`：
+所有指令执行完毕后，再运行如下命令设置默认的namespace (ns)。在 K8S 集群中，管理员已经为每一位用户创建了与 UID 相同的命名空间ns。用户只在自己的 ns 中具有使用权限，因此所有操作都只能在自己的 ns 中完成。通过运行下面的命令，可以避免每个命令都需要指定ns。
 
 ```bash
-kubectl config set-context --current --namespace=test01  # test01为分配的namespace
+kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
+
+之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
+
+```bash
+kubectl get pvc
+```
+应该能看到返回了3个或7个PVC （是用户在集群中可以访问的存储空间，可以理解为是一个盘）。
 
 ## 使用K8S
 
-在 K8S 集群中，管理员已经为每一位用户创建了与 UID 相同的命名空间ns。用户只在自己的 ns 中具有使用权限，因此所有操作都只能在自己的 ns 中完成。
+### 使用默认配置启动计算任务
 
-用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s，而 helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。本仓库为用户提供了创建计算任务的 helm 模板，只需要将 values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。以本仓库中 test06 用户的 values.yaml 文件为例，在本项目的根路径使用下面的命令就可以创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。
+用户可以直接使用 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 管理 k8s，而 helm 是 Kubernetes 的包管理器，helm的安装及使用方法可以参考[官方文档](https://helm.sh/docs/)。本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
 
 ```
-helm install user-test06 \
-      --namespace=test06 \
-      --values ./user/userchart/values.yaml \
-      ./user/userchart
+########### 用户配置 ###########
+EMAIL: username@iiis.co     # 自己的用户名
+NameSpace: username   # 自己的namespace （同用户名）
+UID: 0000          #   设置为注册时收到邮件中的UID，不能填别的
+GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
+
+########### 任务配置 ###########
+DeployName: username-pytorch-lec01     # 任务（deployment）的名字，建议用`UID+任务描述`的格式
+Label: pytorch-lec01              # 任务的标签，建议用`镜像名+任务描述`的格式
+ContainerName: pytorch-lec01      # 容器名，建议用`镜像名+任务描述`的格式
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
+Limits:                     # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请
+  CPU: 8
+  memory: 20Gi
+  GPU: 1
+NVMEStorage: 1T            # 申请的本地盘/scratch的大小
+
 ```
 
-`user-test06`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理。`--namespace=test06`指定了test06自己的用户ns，`--values ./user/userchart/values.yaml`为helm模板的各项变量提供了对应的值，最后`./user/userchart`是helm模板的路径位置。
+此文件用于创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。你可以复制这个文件到比如 `cp value-template.yaml lec01.yaml`，然后编辑lec01.yaml文件，输入你的配置参数。之后在user目录中运行
 
-在账号的初始状态，管理员为用户创建好了用于长期保存数据的[持久卷申领（PersistentVolumeClaim，PVC）](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/)。
+```
+cd user
+helm install test06-lec01 --values ./lec01.yaml ./userchart
+```
+
+`test06-lec01`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理。`--values ./lec01.yaml`为helm模板的各项变量提供了对应的值（你刚刚设置的），最后`./userchart`是helm模板的路径位置。
+
+之后，可以通过运行 
+```bash
+kubectl get pods
+```
+来观察启动的pod是否已经启动了。启动之后可以通过
+
+```bash
+kubectl exec -i name_of_the_pod -- bash
+```
+来连接这个pod，并且启动bash。建议大家使用后边描述的使用VSCode连接K8S使用，要方便很多。
+
+### 默认挂载的存储描述
+
+在默认的模板中，自动为每个pod默认挂载了三个存储卷。这些存储卷是管理员为用户创建好了用于长期保存数据的[持久卷申领（PersistentVolumeClaim，PVC）](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/)。
+
 - 挂载于容器内`/root`路径的NFS服务的PVC，用于存储文档及代码等小文件；
 - 挂载于容器内`/gfshome`路径GFS的个人存储空间PVC，用于存储模型文件、数据集等大文件；
 - 挂载于容器内`/share`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；
@@ -102,14 +134,13 @@ helm install user-test06 \
 上面的helm模板中会自动挂载长期存储数据的三个PVC，并自动创建对应于`/scratch1`至`/scratch4`的四个临时数据存储PVC。
 
 
-
 | 存储系统   | 写入速度 |
 | ---------- | -------- |
 | 宿主机NVME | 2.3GB/s  |
 | GFS        | 1GB/s    |
 | NFS        | 1GB/s    |
 
-
+### 删除计算任务
 
 通过下面的命令删除计算任务
 
@@ -119,16 +150,8 @@ helm delete test06-pytorch2.1.1 --namespace=test06
 
 该命令会自动删除容器和应于`/scratch1`至`/scratch4`的四个临时数据存储PVC，但不会删除长期存储数据的三个PVC。
 
-values.yaml 文件的内容包括
-- NameSpace：修改为自己的UID
-- DeployName：建议用`UID+任务描述`的格式
-- Label：Deployment的标签，建议用`容器镜像名+任务描述`的格式
-- ContainerName：容器名，建议用`容器镜像名+任务描述`的格式
-- ContainerImage：容器镜像地址
-- Limits：容器的资源限制，注意所有的容器资源总和不能超过自己ns的quota
-- NVMEStorage：`/scratch1`至`/scratch4`的四个临时数据存储PVC的大小
-- UIDD：使用管理员分配的默认值，不能修改
-- GIDD：使用管理员分配的默认值，不能修改
+
+### 定制自己的模板
 
 如果对helm chart功能及语法比较熟悉，也欢迎用户对模板进行修改或定制，并将成果分享给大家。
 
