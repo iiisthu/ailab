@@ -311,7 +311,7 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 从刚才我们制作的镜像创建 Pod 分为两步，首先需要将镜像推送到集群镜像仓库 Harbor，再从 Harbor 对应的镜像拉起 Pod。
 
-在连接 VPN 后，访问[harbor.ai.iiis.co](http://harbor.ai.iiis.co)，用户名密码同 VPN。
+在连接 VPN 后，访问[https://harbor.ai.iiis.co](https://harbor.ai.iiis.co)，注意这里必须是https，用户名密码同 VPN。
 
 > **_NOTE:_** 注意这里的用户名不需要加入域名信息，即只需要`username`而不是Email。
 
