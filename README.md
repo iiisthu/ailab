@@ -24,9 +24,9 @@
 
 |系统|登陆地址|功能|
 |---|---|---|
-|密码管理|https://auth.ai.iiis.co|账号修改密码。|
-|Harbor|https://harbor.ai.iiis.co|私有容器镜像仓库|
-|kubeconfig|https://login.ai.iiis.co|kubeconfig配置文件分发平台|
+|密码管理|https://auth.ai.iiis.co:9443|账号修改密码。|
+|Harbor|https://harbor.ai.iiis.co:9443|私有容器镜像仓库|
+|kubeconfig|https://login.ai.iiis.co:9443|kubeconfig配置文件分发平台|
 
 ## 获取访问权限
 
@@ -60,13 +60,13 @@ https://helm.sh/docs/intro/install/#from-script
 
 用户基于 kubeconfig 通过命令行方式使用K8S，需要先在自己的终端设备配置好 kubeconfig。利用系统提供的 kubeconfig 信息（包含用户账户和 Token 等信息），可以在自己的终端利用 kubectl 对 K8S 集群中的资源进行访问。本节介绍如何获取和使用 kubeconfig。
 
-用浏览器访问URL地址：https://login.ai.iiis.co ，会进入Login界面：
+用浏览器访问URL地址：https://login.ai.iiis.co:9443，会进入Login界面：
 
 ![](assets/dex_login.png)
 
 输入你的邮箱地址（用户名@iiis.co）和密码（你上边修改过的密码，与VPN密码相同）即可登录。
 
->注：这里的邮箱地址是是***用户名@iiis.co***。
+>注：这里的邮箱地址是***用户名@iiis.co***。
 
 进入kubeconfig信息页面，选择您使用的系统类型。
 
@@ -103,8 +103,8 @@ kubectl get pvc
 
 ```
 ########### 用户配置 ###########
-EMAIL: username@iiis.co     # 自己的用户名
-NameSpace: username   # 自己的namespace （同用户名）
+EMAIL: username@iiis.co     # 用户名@iiis.co
+NameSpace: username   # 自己的namespace （同用户名,但不带@iiis后缀）
 UID: 0000          #   设置为注册时收到邮件中的UID，不能填别的
 GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
 
@@ -112,7 +112,7 @@ GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
 DeployName: username-pytorch-lec01     # 任务（deployment）的名字，建议用`UID+任务描述`的格式
 Label: pytorch-lec01              # 任务的标签，建议用`镜像名+任务描述`的格式
 ContainerName: pytorch-lec01      # 容器名，建议用`镜像名+任务描述`的格式
-ContainerImage: harbor.ai.iiis.co/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
+ContainerImage: harbor.ai.iiis.co:9443/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
 Limits:                     # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请
   CPU: 8
   memory: 20Gi
@@ -186,7 +186,7 @@ helm delete 命令会自动删除容器和应于`/scratch1`至`/scratch4`的四�
 
 集群提供了一套简单的密码修改界面，用户可以修改自己账号的密码。
 
-用浏览器访问URL地址 `https://auth.ai.iiis.co` 访问密码修改界面。界面如下图：
+用浏览器访问URL地址 `https://auth.ai.iiis.co:9443` 访问密码修改界面。界面如下图：
 ![](assets/ssp_main_page.png)
 
 在界面上填写用户名（界面上的Login字段）、原密码（Old password字段）、新密码（New password字段），并重复输入一次新密码（Confirm字段），点击【Send】按钮，即可完成账号密码修改。
@@ -290,11 +290,11 @@ build
 
 ###### 编写 Dockerfile 制作镜像
 
-我们从`harbor.ai.iiis.co/library/`下的镜像出发，安装`requirements.txt`中的依赖，并安装数据。我们这里不赘述[ Dockerfile 的语法](https://docs.docker.com/engine/reference/builder/)。实例的 Dockerfile 如下：
+我们从`harbor.ai.iiis.co:9443/library/`下的镜像出发，安装`requirements.txt`中的依赖，并安装数据。我们这里不赘述[ Dockerfile 的语法](https://docs.docker.com/engine/reference/builder/)。实例的 Dockerfile 如下：
 
 ```docker
 # Dockerfile
-FROM harbor.ai.iiis.co/library/ubuntu-pytorch:1.5.0
+FROM harbor.ai.iiis.co:9443/library/ubuntu-pytorch:1.5.0
 COPY . build
 RUN pip install -r build/requirements.txt && cd build/samplemod; pip install . && mkdir -p workspace && rm -rf build
 ```
@@ -318,9 +318,9 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 从刚才我们制作的镜像创建 Pod 分为两步，首先需要将镜像推送到集群镜像仓库 Harbor，再从 Harbor 对应的镜像拉起 Pod。
 
-在连接 VPN 后，访问[https://harbor.ai.iiis.co](https://harbor.ai.iiis.co)，注意这里必须是https，用户名密码同 VPN。
+在连接 VPN 后，访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，用户名密码同 VPN。
 
-> **_NOTE:_** 注意这里的用户名不需要加入域名信息，即只需要`username`而不是Email。
+> **_NOTE:_** 注意这里的用户名格式为“用户名@iiis.co”。
 
 连接到 Harbor 后新建项目：
 
@@ -330,18 +330,18 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 > **_NOTE:_** 注意这里需要勾选公开，原因是私有集群物理机的 docker 并没有登录用户个人的 Harbor 账户，因此无法拉取私有仓库中的镜像。
 
-假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.ai.iiis.co/zhangsan/`下，首先 tag 我们做好的镜像：
+假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.ai.iiis.co:9443/zhangsan/`下，首先 tag 我们做好的镜像：
 
 ```bash
-docker tag sample:v0 harbor.ai.iiis.co/zhangsan/sample:v0
+docker tag sample:v0 harbor.ai.iiis.co:9443/zhangsan/sample:v0
 ```
 
 之后将镜像 push 到 Harbor 中，我们需要先在 docker 中登录我们在 Harbor上的账号：
 
 ```txt
-$ docker logout harbor.ai.iiis.co
+$ docker logout harbor.ai.iiis.co:9443
 Removing login credentials for harbor.ai.iiis.co
-$ docker login harbor.ai.iiis.co
+$ docker login harbor.ai.iiis.co:9443
 Username: zhangsan@iiis.co
 Password:
 Login Succeeded
@@ -350,7 +350,7 @@ Login Succeeded
 最后将镜像推送到 Harbor 中：
 
 ```bash
-docker push harbor.ai.iiis.co/zhangsan/sample:v0
+docker push harbor.ai.iiis.co:9443/zhangsan/sample:v0
 ```
 
 创建好镜像后，拉起 Pod 流程和标准镜像一样。
