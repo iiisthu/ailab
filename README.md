@@ -32,13 +32,17 @@
 
 在管理员已经为用户创建好账号的情况下， 用户需要确认是否已经满足下列三个条件
 
-- 您使用的终端可以访问K8S集群，[连接集群的方法参考此文档](http://wiki.iiis.systems:9988/w/index.php/VPN_User_Guide)；
+- 您使用的终端可以连通SSH跳板机，测试方法为ping js.ai.iiis.co。
 - 您已经获取了访问K8S集群的用户名、用户账号关联邮箱和登录密码。
 - 在等待获取访问权限的过程中，可以先准备好安装本地软件 （见下节）。
 为了确保账号安全，强烈建议大家拿到账号后先 [修改密码](#修改账号密码)。
 
 ## 使用SSH跳板机
-  TODO: add instructions
+  
+  在您使用的终端上执行如下命令：ssh -i 私钥文件名  -N -L 8443:api.ai.iiis.co:8443 ailab@js.ai.iiis.co -p 9022
+  如果终端上8443端口已经被其他程序占用，可以换成其他端口，比如换成8444端口，则命令应写成：
+  ssh -i 私钥文件名  -N -L 8444:api.ai.iiis.co:8443 ailab@js.ai.iiis.co -p 9022
+  命令执行后，会出现貌似“卡死”现象，这是正常的。不要关闭该terminal。可以另打开一个terminal进行其他操作。也可以在上述ssh命令的最后加上&，将放入后台。
   
 ## 配置集群访问环境
 
@@ -90,6 +94,10 @@ https://helm.sh/docs/intro/install/#from-script
 ```bash
 kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
+修改所获得的kubeconfig文件，把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8443。
+或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8443
+提示：如果连接SSH跳板机时，本地终端使用的端口不是8443，而是其他端口，比如8444，则需要把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8444。
+或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8444
 
 之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
 
@@ -321,7 +329,7 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 从刚才我们制作的镜像创建 Pod 分为两步，首先需要将镜像推送到集群镜像仓库 Harbor，再从 Harbor 对应的镜像拉起 Pod。
 
-在连接 VPN 后，访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，用户名密码同 VPN。
+访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，密码等同访问k8s集群的密码。
 
 > **_NOTE:_** 注意这里的用户名格式为“用户名@iiis.co”。
 
