@@ -101,10 +101,8 @@ https://helm.sh/docs/intro/install/#from-script
 ```bash
 kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
-修改所获得的kubeconfig文件，把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8443。
-或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8443
-提示：如果连接SSH跳板机时，本地终端使用的端口不是8443，而是其他端口，比如8444，则需要把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8444。
-或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8444
+- 修改所获得的kubeconfig文件，把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8443。 (或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8443)
+- 提示：如果连接SSH跳板机时，本地终端使用的端口不是8443，而是其他端口，比如8444，则需要把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8444。(或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8444)
 
 之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
 
