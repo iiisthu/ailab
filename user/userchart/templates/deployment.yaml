@@ -1,38 +1,52 @@
+{{ $randomid := randAlphaNum 8 | lower }}
+{{ $base := .Values.BaseName | default "undescribed-job" }}
+{{ $namespace := .Values.NameSpace | default "default"  }}
+{{ $deploy := .Values.DeployName | default (printf "%s-%s-%s" $namespace $base .Release.Name) }}
+{{ $label := .Values.Label | default (printf "%s-%s" $base .Release.Name) }}
+{{ $containername := .Values.ContainerName | default (printf "%s-%s" $base .Release.Name) }}
+{{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.1" }}
+{{ $uid := .Values.UID | default "1000" }}
+{{ $gid := .Values.GID | default "1000" }}
+{{ $limitscpu := .Values.Limits.CPU | default "8" }}
+{{ $limitsmemory := .Values.Limits.memory | default "16Gi" }}
+{{ $limitsgpu := .Values.Limits.GPU | default "0" }}
+{{ $nvme := .Values.NVMEStorage | default "100Gi" }}
+{{ $nogfs := .Values.NoGFS | default "false" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+  name: {{ $deploy }}
+  namespace: {{ $namespace }}
   labels:
-    app: {{ .Values.Label }}
+    app: {{ $label }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.Label }}
+      app: {{ $label }}
   template:
     metadata:
       labels:
-        app: {{ .Values.Label }}
+        app: {{ $label }}
     spec:
       hostIPC: false
       hostPID: false
-      hostNetwork: false
+      hostNetwork: true
       securityContext:
-        runAsUser: {{ .Values.UIDD }}
-        runAsGroup: {{ .Values.GIDD }}
+        runAsUser: {{ $uid }}
+        runAsGroup: {{ $gid }}
       containers:
-      - name: {{ .Values.ContainerName }}
+      - name: {{ $containername }}
         imagePullPolicy: IfNotPresent
-        image: {{ .Values.ContainerImage }} # 可自行更改镜像和版本
+        image: {{ $containerimage }} # 可自行更改镜像和版本
         command: ["bash", "-c", "--"]
         args: ["while true; do sleep 30; done;"]
         resources:
           limits:
-            cpu: {{ .Values.Limits.CPU }} # 最大CPU
-            memory: {{ .Values.Limits.memory }} # 最大内存数目
-            nvidia.com/gpu: {{ .Values.Limits.GPU }} # requesting 1 GPUs
+            cpu: {{ $limitscpu }} # 最大CPU
+            memory: {{ $limitsmemory }} # 最大内存数目
+            nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
         volumeMounts:
         - name: nfshome # 与下面volumes的名字对应
           mountPath: /root # 本地的挂载点
@@ -44,101 +58,107 @@ spec:
           mountPath: /scratch3 # 本地的挂载点
         - name: scratch4 # 与下面volumes的名字对应
           mountPath: /scratch4 # 本地的挂载点
+{{ if not $nogfs }}
         - name: gfshome # 与下面volumes的名字对应
           mountPath: /gfshome # 本地的挂载点
         - name: gfshare # 与下面volumes的名字对应
           mountPath: /share # 本地的挂载点
+{{ end }}
       volumes:
       - name: nfshome
         persistentVolumeClaim:
-          claimName: pvc-nfshome-{{ .Values.NameSpace }}
+          claimName: pvc-nfshome-{{ $namespace }}
       - name: scratch1
         persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-1-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+          claimName: pvc-rancher-localpath-1-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
       - name: scratch2
         persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-2-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+          claimName: pvc-rancher-localpath-2-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
       - name: scratch3
         persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-3-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+          claimName: pvc-rancher-localpath-3-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
       - name: scratch4
         persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-4-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
+          claimName: pvc-rancher-localpath-4-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
+
+{{ if not $nogfs }}
       - name: gfshome
         persistentVolumeClaim:
-          claimName: gfs-sata-pvc-{{ .Values.NameSpace }}
+          claimName: gfs-sata-pvc-{{ $namespace }}
       - name: gfshare
         persistentVolumeClaim:
-          claimName: gfs-sata-pvc-share-{{ .Values.NameSpace }}
+          claimName: gfs-sata-pvc-share-{{ $namespace }}
+{{ end }}
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   annotations: {}
   labels: 
-    app: {{ .Values.Label }}
-    k8s.kuboard.cn/name: {{ .Values.DeployName }}
-  name: {{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+    app: {{ $label }}
+    k8s.kuboard.cn/name: {{ $deploy }}
+  name: {{ $deploy }}
+  namespace: {{ $namespace }}
 spec: 
   ports:
-    - name: {{ .Values.DeployName }}-port
+    - name: {{ $deploy }}-port
       port: 22
       protocol: TCP
       targetPort: 22
   selector: 
-    app: {{ .Values.Label }}
+    app: {{ $label }}
   sessionAffinity: None
   type: NodePort
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-rancher-localpath-1-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+  name: pvc-rancher-localpath-1-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
+  namespace: {{ $namespace }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.NVMEStorage }}
+      storage: {{ $nvme }}
   storageClassName: rancher-local-path
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-rancher-localpath-2-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+  name: pvc-rancher-localpath-2-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
+  namespace: {{ $namespace }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.NVMEStorage }}
+      storage: {{ $nvme}}
   storageClassName: rancher-local-path
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-rancher-localpath-3-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+  name: pvc-rancher-localpath-3-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
+  namespace: {{ $namespace }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.NVMEStorage }}
+      storage: {{ $nvme }}
   storageClassName: rancher-local-path
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-rancher-localpath-4-{{ .Values.NameSpace }}-{{ .Values.DeployName }}
-  namespace: {{ .Values.NameSpace }}
+  name: pvc-rancher-localpath-4-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
+  namespace: {{ $namespace }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.NVMEStorage }}
+      storage: {{ $nvme }}
   storageClassName: rancher-local-path
