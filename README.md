@@ -32,11 +32,25 @@
 
 在管理员已经为用户创建好账号的情况下， 用户需要确认是否已经满足下列三个条件
 
-- 您使用的终端可以访问K8S集群，[连接集群的方法参考此文档](http://wiki.iiis.systems:9988/w/index.php/VPN_User_Guide)；
+- 您使用的终端可以连通SSH跳板机，测试方法为ping js.ai.iiis.co， 如果ping不通，检查你的网络设置（特别是DNS设置），或者联络管理员。
 - 您已经获取了访问K8S集群的用户名、用户账号关联邮箱和登录密码。
 - 在等待获取访问权限的过程中，可以先准备好安装本地软件 （见下节）。
 为了确保账号安全，强烈建议大家拿到账号后先 [修改密码](#修改账号密码)。
 
+## 使用SSH跳板机
+  
+ - 在您使用的终端上执行如下命令：
+```bash
+   ssh -i 私钥文件名  -N -L 8443:api.ai.iiis.co:8443 ailab@js.ai.iiis.co -p 9022
+```
+私钥文件名默认为~/.ssh/id_rsa (可以省略）
+ - 如果终端上8443端口已经被其他程序占用，可以换成其他端口，比如换成8444端口，则命令应写成：
+```bash
+  ssh -i 私钥文件名  -N -L 8444:api.ai.iiis.co:8443 ailab@js.ai.iiis.co -p 9022
+```
+ - 命令执行后，会出现貌似“卡死”现象（命令并不返回），这是正常的。不要关闭该terminal。可以另打开一个terminal进行其他操作。也可以在上述ssh命令的最后加上&，将放入后台。
+ - 如果您希望自动连接跳板机，可以参考autossh (https://www.harding.motd.ca/autossh/)
+  
 ## 配置集群访问环境
 
 ### 安装本地软件
@@ -87,6 +101,8 @@ https://helm.sh/docs/intro/install/#from-script
 ```bash
 kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
+- 修改所获得的kubeconfig文件，把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8443。 (或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8443)
+- 提示：如果连接SSH跳板机时，本地终端使用的端口不是8443，而是其他端口，比如8444，则需要把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8444。(或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8444)
 
 之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
 
@@ -102,22 +118,22 @@ kubectl get pvc
 本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
 
 ```
-########### 用户配置 ###########
-EMAIL: username@iiis.co     # 用户名@iiis.co
-NameSpace: username   # 自己的namespace （同用户名,但不带@iiis后缀）
-UID: 0000          #   设置为注册时收到邮件中的UID，不能填别的
-GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
-
-########### 任务配置 ###########
-DeployName: username-pytorch-lec01     # 任务（deployment）的名字，建议用`UID+任务描述`的格式
-Label: pytorch-lec01              # 任务的标签，建议用`镜像名+任务描述`的格式
-ContainerName: pytorch-lec01      # 容器名，建议用`镜像名+任务描述`的格式
-ContainerImage: harbor.ai.iiis.co:9443/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
-Limits:                     # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请
-  CPU: 8
-  memory: 20Gi
-  GPU: 1
-NVMEStorage: 1T            # 申请的本地盘/scratch的大小
+########### 必须要写的部分 ###########
+NameSpace: namespace   # 自己的namespace （同用户名）
+UID: 000            #   设置为注册时收到邮件中的UID，不能填别的
+GID: 000            #   设置为注册时收到邮件中的GID，不能填别的
+BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.1   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
+Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+ CPU: 8
+ memory: 16Gi
+ GPU: 0
+ 
+########### 选填的部分 ###########
+# DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
+# Label: pytorch-release              # 任务的标签，默认为`BaseName-ReleaseName`
+# ContainerName: pytorch-release      # 容器名，默认为`BaseName-ReleaseName`
+# NVMEStorage: 100G                   # 申请的本地盘/scratch的大小，不填即为默认值
 
 ```
 
@@ -318,7 +334,7 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 从刚才我们制作的镜像创建 Pod 分为两步，首先需要将镜像推送到集群镜像仓库 Harbor，再从 Harbor 对应的镜像拉起 Pod。
 
-在连接 VPN 后，访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，用户名密码同 VPN。
+访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，密码等同访问k8s集群的密码。
 
 > **_NOTE:_** 注意这里的用户名格式为“用户名@iiis.co”。
 
