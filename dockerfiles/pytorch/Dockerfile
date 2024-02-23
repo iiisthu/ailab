@@ -19,7 +19,10 @@ RUN apt-get update && \
     rmdir /workspace \
     ln -s /root/workspace/ /workspace
 
-RUN pip install ipykernel ipywidgets
+COPY requirements.txt /opt/app/requirements.txt
+WORKDIR /opt/app
+RUN pip install -r requirements.txt
+WORKDIR /root
 
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
 CMD ["-p","22"]

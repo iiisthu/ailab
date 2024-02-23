@@ -5,13 +5,16 @@
 {{ $label := .Values.Label | default (printf "%s-%s" $base .Release.Name) }}
 {{ $containername := .Values.ContainerName | default (printf "%s-%s" $base .Release.Name) }}
 {{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.1" }}
-{{ $uid := .Values.UID | default "1000" }}
-{{ $gid := .Values.GID | default "1000" }}
-{{ $limitscpu := .Values.Limits.CPU | default "8" }}
-{{ $limitsmemory := .Values.Limits.memory | default "16Gi" }}
-{{ $limitsgpu := .Values.Limits.GPU | default "0" }}
+{{ $uid := .Values.UID | default "0" }}
+{{ $gid := .Values.GID | default "0" }}
+
+{{- $limits := .Values.Limits | default (dict) }}
+{{ $limitscpu := $limits.CPU | default "8" }}
+{{ $limitsmemory := $limits.memory | default "16Gi" }}
+{{ $limitsgpu := $limits.GPU | default "0" }}
+
 {{ $nvme := .Values.NVMEStorage | default "100Gi" }}
-{{ $nogfs := .Values.NoGFS | default "false" }}
+{{ $nogfs := .Values.NoGFS | default false }}
 ---
 apiVersion: apps/v1
 kind: Deployment

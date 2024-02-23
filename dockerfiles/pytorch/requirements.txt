@@ -1,0 +1,18 @@
+matplotlib==3.7.2
+# numpy==1.25.2
+openai==1.3.7
+pandas==2.0.3
+requests==2.31.0
+scikit-learn==1.3.2
+transformers==4.32.1
+sentencepiece==0.1.99
+protobuf==3.20.3
+datasets==2.14.5
+ipykernel==6.27.0
+accelerate==0.26.1 #得先安装pytorch
+chardet==5.2.0
+python-dotenv
+httpx[socks]
+httpcore[socks]
+ipykernel
+ipywidgets
