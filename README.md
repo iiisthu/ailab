@@ -118,22 +118,22 @@ kubectl get pvc
 本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
 
 ```
-########### 用户配置 ###########
-EMAIL: username@iiis.co     # 用户名@iiis.co
-NameSpace: username   # 自己的namespace （同用户名,但不带@iiis后缀）
-UID: 0000          #   设置为注册时收到邮件中的UID，不能填别的
-GID: 000           #   设置为注册时收到邮件中的GID，不能填别的
-
-########### 任务配置 ###########
-DeployName: username-pytorch-lec01     # 任务（deployment）的名字，建议用`UID+任务描述`的格式
-Label: pytorch-lec01              # 任务的标签，建议用`镜像名+任务描述`的格式
-ContainerName: pytorch-lec01      # 容器名，建议用`镜像名+任务描述`的格式
-ContainerImage: harbor.ai.iiis.co:9443/xuw/pytorch:latest   # 镜像名称，可以选择默认的，或者见下边的说明
-Limits:                     # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请
-  CPU: 8
-  memory: 20Gi
-  GPU: 1
-NVMEStorage: 1T            # 申请的本地盘/scratch的大小
+########### 必须要写的部分 ###########
+NameSpace: namespace   # 自己的namespace （同用户名）
+UID: 000            #   设置为注册时收到邮件中的UID，不能填别的
+GID: 000            #   设置为注册时收到邮件中的GID，不能填别的
+BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.1   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
+Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+ CPU: 8
+ memory: 16Gi
+ GPU: 0
+ 
+########### 选填的部分 ###########
+# DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
+# Label: pytorch-release              # 任务的标签，默认为`BaseName-ReleaseName`
+# ContainerName: pytorch-release      # 容器名，默认为`BaseName-ReleaseName`
+# NVMEStorage: 100G                   # 申请的本地盘/scratch的大小，不填即为默认值
 
 ```
 
