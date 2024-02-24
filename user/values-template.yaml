@@ -4,8 +4,6 @@
 
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
-UID: 000            #   设置为注册时收到邮件中的UID，不能填别的
-GID: 000            #   设置为注册时收到邮件中的GID，不能填别的
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
 ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.1   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
 Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值

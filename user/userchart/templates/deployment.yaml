@@ -5,8 +5,6 @@
 {{ $label := .Values.Label | default (printf "%s-%s" $base .Release.Name) }}
 {{ $containername := .Values.ContainerName | default (printf "%s-%s" $base .Release.Name) }}
 {{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.1" }}
-{{ $uid := .Values.UIDD | default "1000" }}
-{{ $gid := .Values.GIDD | default "1000" }}
 {{ $limitscpu := .Values.Limits.CPU | default "8" }}
 {{ $limitsmemory := .Values.Limits.memory | default "16Gi" }}
 {{ $limitsgpu := .Values.Limits.GPU | default "0" }}
@@ -30,30 +28,11 @@ spec:
       labels:
         app: {{ $label }}
     spec:
-      initContainers:
-        - name: init-ugug
-          image: {{ $containerimage }} # 可自行更改镜像和版本
-          command:  ['sh', '-c', 'cat /uid/uid.txt >> /etc/passwd && cat /gid/gid.txt >> /etc/group && cp /etc/passwd /etcv/.&& cp /etc/group /etcv/.']
-          imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              cpu: {{ $limitscpu }} # 最大CPU
-              memory: {{ $limitsmemory }} # 最大内存数目
-          volumeMounts:
-            - name: uidv
-              mountPath: /uid
-            - name: gidv
-              mountPath: /gid
-            - name: etcv
-              mountPath: /etcv
       hostIPC: false
       hostPID: false
       hostNetwork: false
       containers:
       - name: {{ $containername }}
-        securityContext:
-          runAsUser: {{ $uid }}
-          runAsGroup: {{ $gid }}
         imagePullPolicy: IfNotPresent
         image: {{ $containerimage }} # 可自行更改镜像和版本
         command: ["bash", "-c", "--"]
@@ -64,12 +43,6 @@ spec:
             memory: {{ $limitsmemory }} # 最大内存数目
             nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
         volumeMounts:
-          - name: etcv
-            mountPath: /etc/group
-            subPath: group
-          - name: etcv
-            mountPath: /etc/passwd
-            subPath: passwd
           - name: nfshome # 与下面volumes的名字对应
             mountPath: /root # 本地的挂载点
           - name: scratch1 # 与下面volumes的名字对应
@@ -87,21 +60,6 @@ spec:
             mountPath: /share # 本地的挂载点
 {{ end }}
       volumes:
-        - name: uidv
-          configMap:
-            name: uidgidcm
-            items:
-            - key: uid
-              path: uid.txt
-        - name: gidv
-          configMap:
-            name: uidgidcm
-            items:
-            - key: gid
-              path: gid.txt
-        - name: etcv
-          emptyDir:
-            medium: Memory
         - name: nfshome
           persistentVolumeClaim:
             claimName: pvc-nfshome-{{ $namespace }}
