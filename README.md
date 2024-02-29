@@ -78,7 +78,7 @@ https://helm.sh/docs/intro/install/#from-script
 
 ![](assets/dex_login.png)
 
-输入你的邮箱地址（用户名@iiis.co）和密码（你上边修改过的密码，与VPN密码相同）即可登录。
+输入邮箱地址（邮箱地址等同申请的账号，格式为：用户名@iiis.co）和密码（上边修改过的密码）即可登录。
 
 >注：这里的邮箱地址是***用户名@iiis.co***。
 
@@ -120,31 +120,29 @@ kubectl get pvc
 ```
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
-UID: 000            #   设置为注册时收到邮件中的UID，不能填别的
-GID: 000            #   设置为注册时收到邮件中的GID，不能填别的
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.1   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
-Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
- CPU: 8
- memory: 16Gi
- GPU: 0
- 
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.5，或者见README的说明
+
 ########### 选填的部分 ###########
 # DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
 # Label: pytorch-release              # 任务的标签，默认为`BaseName-ReleaseName`
 # ContainerName: pytorch-release      # 容器名，默认为`BaseName-ReleaseName`
 # NVMEStorage: 100G                   # 申请的本地盘/scratch的大小，不填即为默认值
+# Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+#  CPU: 8
+#  memory: 16Gi
+#  GPU: 0
 
 ```
 
-此文件用于创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。你可以复制这个文件到比如 `cp value-template.yaml lec01.yaml`，然后编辑lec01.yaml文件，输入你的配置参数。之后在user目录中运行
+此文件用于创建一个副本数为 1 的 [Deployment](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)计算任务工作负载。你可以复制这个文件到比如 `cp value-template.yaml lab1.yaml`，然后编辑lab1.yaml文件，输入你的配置参数。之后在user目录中运行
 
 ```
 cd user
-helm install release_name --values ./lec01.yaml ./userchart
+helm install release_name --values ./lab1.yaml ./userchart
 ```
 
-`release_name`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理，例如test06_lec01。`--values ./lec01.yaml`为helm模板的各项变量提供了对应的值（你刚刚设置的），最后`./userchart`是helm模板的路径位置。
+`release_name`为helm部署的版本名（release），建议设置为自己的`UID+任务描述`的格式以方便后续维护管理，例如xuw_lab1。`--values ./lab1.yaml`为helm模板的各项变量提供了对应的值（你刚刚设置的），最后`./userchart`是helm模板的路径位置。
 
 之后，可以通过运行 
 ```bash
@@ -334,7 +332,7 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 从刚才我们制作的镜像创建 Pod 分为两步，首先需要将镜像推送到集群镜像仓库 Harbor，再从 Harbor 对应的镜像拉起 Pod。
 
-访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，密码等同访问k8s集群的密码。
+访问[https://harbor.ai.iiis.co:9443](https://harbor.ai.iiis.co:9443)，注意这里必须是https，用户名及密码等同用户访问k8s集群的用户名及密码。
 
 > **_NOTE:_** 注意这里的用户名格式为“用户名@iiis.co”。
 

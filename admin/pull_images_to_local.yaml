@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: prepuller
+spec:
+  selector:
+    matchLabels:
+      name: prepuller
+  template:
+    metadata:
+      labels:
+        name: prepuller
+    spec:
+      # Configure an init container for each image you want to pull
+      initContainers:
+        - name: prepuller-1
+          # Set the image you want to pull
+          image: harbor.ai.iiis.co/xuw/pytorch:v1.5
+          # Use a known command that will exit successfully immediately
+          # Any no-op command will do but YMMV with scratch based containers
+          command: ["sh", "-c", "'true'"]
+          resources:
+            limits:
+              cpu: 100m
+              memory: 1Gi
+            requests:
+              cpu: 1m
+              memory: 8Mi
+
+        # - name: prepuller-2
+        #   image: ...
+        #   command: ["sh", "-c", "'true'"]
+
+        # etc...
+
+      # Use the pause container to ensure the Pod goes into a `Running` phase
+      # but doesn't take up resource on the cluster
+      containers:
+        - name: pause
+          image: harbor.ai.iiis.co:9443/xuw/pause:3.2
+          resources:
+            limits:
+              cpu: 1m
+              memory: 8Mi
+            requests:
+              cpu: 1m
+              memory: 8Mi
