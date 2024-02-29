@@ -24,6 +24,9 @@ WORKDIR /opt/app
 RUN pip install -r requirements.txt
 WORKDIR /root
 
+RUN apt-get install -y libgl1 && \
+    apt-get clean && rm -rf /tmp/* 
+
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]
 CMD ["-p","22"]
 
