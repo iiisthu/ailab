@@ -121,7 +121,7 @@ kubectl get pvc
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.2   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.2，或者见README的说明
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.5，或者见README的说明
 
 ########### 选填的部分 ###########
 # DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
