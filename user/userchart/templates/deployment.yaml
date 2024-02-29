@@ -4,7 +4,7 @@
 {{ $deploy := .Values.DeployName | default (printf "%s-%s-%s" $namespace $base .Release.Name) }}
 {{ $label := .Values.Label | default (printf "%s-%s" $base .Release.Name) }}
 {{ $containername := .Values.ContainerName | default (printf "%s-%s" $base .Release.Name) }}
-{{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.1" }}
+{{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.3" }}
 {{ $uid := .Values.UID | default "0" }}
 {{ $gid := .Values.GID | default "0" }}
 
