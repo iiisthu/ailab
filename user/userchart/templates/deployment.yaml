@@ -15,6 +15,8 @@
 
 {{ $nvme := .Values.NVMEStorage | default "100Gi" }}
 {{ $nogfs := .Values.NoGFS | default false }}
+{{ $extraport := .Values.ExtraPort | default 0 }}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -109,6 +111,12 @@ spec:
       port: 22
       protocol: TCP
       targetPort: 22
+{{ if $extraport}}
+    - name: {{ $deploy }}-extraport
+      port: {{ $extraport }}
+      protocol: TCP
+      targetPort: {{ $extraport }}
+{{ end }}
   selector: 
     app: {{ $label }}
   sessionAffinity: None
