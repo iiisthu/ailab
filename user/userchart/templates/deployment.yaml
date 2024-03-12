@@ -18,6 +18,9 @@
 {{ $extraport := .Values.ExtraPort | default 0 }}
 {{ $ingresshost := .Values.IngressHost | default "" }}
 
+{{ $command := .Values.Command | default "" }}
+{{ $args := .Values.Args | default "" }}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,8 +49,13 @@ spec:
       - name: {{ $containername }}
         imagePullPolicy: IfNotPresent
         image: {{ $containerimage }} # 可自行更改镜像和版本
+{{- if $command }}
+        command: {{ $command }}
+        args: {{ $args }}
+{{- else }}
         command: ["bash", "-c", "--"]
         args: ["while true; do sleep 30; done;"]
+{{- end }}
         resources:
           limits:
             cpu: {{ $limitscpu }} # 最大CPU
@@ -183,7 +191,7 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-  name: {{ $deploy }}-ingress
+  name: {{ $deploy }}
   namespace: {{ $namespace }}
 spec:
   ingressClassName: nginx
