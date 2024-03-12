@@ -6,6 +6,7 @@
     - [配置kubeconfig](#配置kubeconfig)
   - [使用K8S](#使用k8s)
   - [其他使用说明](#其他使用说明)
+    - [运行大模型课程labs代码](#运行大模型课程labs代码)
     - [修改账号密码](#修改账号密码)
     - [使用 VS Code 连接K8S远程调试](#使用-vs-code-连接k8s远程调试)
     - [私有容器镜像仓库](#私有容器镜像仓库)
@@ -195,6 +196,21 @@ helm delete 命令会自动删除容器和应于`/scratch1`至`/scratch4`的四�
 如果对helm chart功能及语法比较熟悉，也欢迎用户对模板进行修改或定制，并将成果分享给大家。
 
 ## 其他使用说明
+
+### 运行大模型课程labs代码
+
+1. 推荐使用下面的“使用 VS Code 连接K8S远程调试”方法先在vscode中连接集群。
+2. 在VS Code命令行（terminal）中，clone课程仓库：
+   ```
+   git clone git@github.com:xuw/llm_course_public.git
+   ```
+3. (更新)查看最新的课程内容信息：
+   ```
+   cd llm_course_public/ && git pull --all
+   ```
+4. 在VS Code中运行labs的Jupyter Notebook
+   - 确定在Server端Jupyter插件已正确安装，已经启用（enable）
+   - 在GUI中设置kernel（environment）为conda即可
 
 ### 修改账号密码
 
