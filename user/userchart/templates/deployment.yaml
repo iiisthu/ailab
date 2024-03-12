@@ -16,6 +16,7 @@
 {{ $nvme := .Values.NVMEStorage | default "100Gi" }}
 {{ $nogfs := .Values.NoGFS | default false }}
 {{ $extraport := .Values.ExtraPort | default 0 }}
+{{ $ingresshost := .Values.IngressHost | default "" }}
 
 ---
 apiVersion: apps/v1
@@ -173,3 +174,33 @@ spec:
     requests:
       storage: {{ $nvme }}
   storageClassName: rancher-local-path
+
+{{ if $ingresshost }}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: {{ $deploy }}-ingress
+  namespace: {{ $namespace }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ $ingresshost }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ $deploy }}
+                port:
+                  number: {{ $extraport }}
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - {{ $ingresshost }}
+      secretName: passwd-tls
+
+{{ end }}
