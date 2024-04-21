@@ -68,15 +68,13 @@ spec:
           mountPath: /scratch1 # 本地的挂载点
         - name: scratch2 # 与下面volumes的名字对应
           mountPath: /scratch2 # 本地的挂载点
-        - name: scratch3 # 与下面volumes的名字对应
-          mountPath: /scratch3 # 本地的挂载点
-        - name: scratch4 # 与下面volumes的名字对应
-          mountPath: /scratch4 # 本地的挂载点
 {{ if not $nogfs }}
         - name: gfshome # 与下面volumes的名字对应
           mountPath: /gfshome # 本地的挂载点
         - name: gfshare # 与下面volumes的名字对应
           mountPath: /share # 本地的挂载点
+        - name: ssdshare # 与下面volumes的名字对应
+          mountPath: /ssdshare # 本地的挂载点
 {{ end }}
       volumes:
       - name: nfshome
@@ -88,12 +86,6 @@ spec:
       - name: scratch2
         persistentVolumeClaim:
           claimName: pvc-rancher-localpath-2-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
-      - name: scratch3
-        persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-3-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
-      - name: scratch4
-        persistentVolumeClaim:
-          claimName: pvc-rancher-localpath-4-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
 
 {{ if not $nogfs }}
       - name: gfshome
@@ -102,6 +94,9 @@ spec:
       - name: gfshare
         persistentVolumeClaim:
           claimName: gfs-sata-pvc-share-{{ $namespace }}
+      - name: ssdshare
+        persistentVolumeClaim:
+          claimName: gfs-nvme-pvc-share-{{ $namespace }}
 {{ end }}
 
 ---
@@ -155,32 +150,6 @@ spec:
   resources:
     requests:
       storage: {{ $nvme}}
-  storageClassName: rancher-local-path
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-rancher-localpath-3-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
-  namespace: {{ $namespace }}
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ $nvme }}
-  storageClassName: rancher-local-path
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-rancher-localpath-4-{{ $namespace }}-{{ $deploy }}-{{ $randomid}}
-  namespace: {{ $namespace }}
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ $nvme }}
   storageClassName: rancher-local-path
 
 {{ if $ingresshost }}
