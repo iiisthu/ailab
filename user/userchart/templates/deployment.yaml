@@ -63,7 +63,7 @@ spec:
             nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
         volumeMounts:
         - name: nfshome # 与下面volumes的名字对应
-          mountPath: /mnt # 本地的挂载点 /root
+          mountPath: /root # 本地的挂载点 /root
         - name: scratch1 # 与下面volumes的名字对应
           mountPath: /scratch1 # 本地的挂载点
         - name: scratch2 # 与下面volumes的名字对应
