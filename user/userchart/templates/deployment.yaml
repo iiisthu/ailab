@@ -63,7 +63,7 @@ spec:
             nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
         volumeMounts:
         - name: nfshome # 与下面volumes的名字对应
-          mountPath: /root # 本地的挂载点
+          mountPath: /mnt # 本地的挂载点 /root
         - name: scratch1 # 与下面volumes的名字对应
           mountPath: /scratch1 # 本地的挂载点
         - name: scratch2 # 与下面volumes的名字对应
@@ -75,8 +75,14 @@ spec:
           mountPath: /share # 本地的挂载点
         - name: ssdshare # 与下面volumes的名字对应
           mountPath: /ssdshare # 本地的挂载点
+        - name: dshm
+          mountPath: /dev/shm
 {{ end }}
       volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 4Gi
       - name: nfshome
         persistentVolumeClaim:
           claimName: pvc-nfshome-{{ $namespace }}
