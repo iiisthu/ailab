@@ -17,6 +17,7 @@
 {{ $nogfs := .Values.NoGFS | default false }}
 {{ $extraport := .Values.ExtraPort | default 0 }}
 {{ $ingresshost := .Values.IngressHost | default "" }}
+{{ $use_shm := .Values.UseShm | default false}}
 
 {{ $command := .Values.Command | default "" }}
 {{ $args := .Values.Args | default "" }}
@@ -63,7 +64,7 @@ spec:
             nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
         volumeMounts:
         - name: nfshome # 与下面volumes的名字对应
-          mountPath: /root # 本地的挂载点
+          mountPath: /root # 本地的挂载点 /root
         - name: scratch1 # 与下面volumes的名字对应
           mountPath: /scratch1 # 本地的挂载点
         - name: scratch2 # 与下面volumes的名字对应
@@ -76,7 +77,17 @@ spec:
         - name: ssdshare # 与下面volumes的名字对应
           mountPath: /ssdshare # 本地的挂载点
 {{ end }}
+{{ if use_shm }}
+        - name: dshm
+          mountPath: /dev/shm
+{{ end }}
       volumes:
+{{ if use_shm }}
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 4Gi
+{{ end }}
       - name: nfshome
         persistentVolumeClaim:
           claimName: pvc-nfshome-{{ $namespace }}
