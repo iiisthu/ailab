@@ -77,12 +77,12 @@ spec:
         - name: ssdshare # 与下面volumes的名字对应
           mountPath: /ssdshare # 本地的挂载点
 {{ end }}
-{{ if use_shm }}
+{{ if $use_shm }}
         - name: dshm
           mountPath: /dev/shm
 {{ end }}
       volumes:
-{{ if use_shm }}
+{{ if $use_shm }}
       - name: dshm
         emptyDir:
           medium: Memory
