@@ -16,6 +16,7 @@ ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 
 #  CPU: 8
 #  memory: 16Gi
 #  GPU: 0
+# use_shm: False
 
 ########### 高级配置 ###########
 # ExtraPort: 7860
