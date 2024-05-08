@@ -17,6 +17,7 @@
 {{ $nogfs := .Values.NoGFS | default false }}
 {{ $extraport := .Values.ExtraPort | default 0 }}
 {{ $ingresshost := .Values.IngressHost | default "" }}
+{{ $use_shm := .Values.UseShm | default false}}
 
 {{ $command := .Values.Command | default "" }}
 {{ $args := .Values.Args | default "" }}
@@ -79,10 +80,12 @@ spec:
           mountPath: /dev/shm
 {{ end }}
       volumes:
+{{ if use_shm }}
       - name: dshm
         emptyDir:
           medium: Memory
           sizeLimit: 4Gi
+{{ end }}
       - name: nfshome
         persistentVolumeClaim:
           claimName: pvc-nfshome-{{ $namespace }}
