@@ -18,6 +18,7 @@
 {{ $extraport := .Values.ExtraPort | default 0 }}
 {{ $ingresshost := .Values.IngressHost | default "" }}
 {{ $use_shm := .Values.UseShm | default false}}
+{{ $shm_size := .Values.ShmSize | default "8Gi" }}
 
 {{ $command := .Values.Command | default "" }}
 {{ $args := .Values.Args | default "" }}
@@ -86,7 +87,7 @@ spec:
       - name: dshm
         emptyDir:
           medium: Memory
-          sizeLimit: 4Gi
+          sizeLimit: {{ $shm_size }}
 {{ end }}
       - name: nfshome
         persistentVolumeClaim:
