@@ -19,6 +19,8 @@ ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 
 # UseShm: False
 # ShmSize: 8Gi
 
+# Replicas: 1     # starting more replica of the pod (for distributed training)
+
 ########### 高级配置 ###########
 # ExtraPort: 7860
 # IngressHost: lab2.ai.iiis.co

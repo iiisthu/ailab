@@ -23,6 +23,8 @@
 {{ $command := .Values.Command | default "" }}
 {{ $args := .Values.Args | default "" }}
 
+{{ $replicas := .Values.Replicas | default 1 }}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,7 +34,7 @@ metadata:
   labels:
     app: {{ $label }}
 spec:
-  replicas: 1
+  replicas: {{ $replicas }}
   selector:
     matchLabels:
       app: {{ $label }}
