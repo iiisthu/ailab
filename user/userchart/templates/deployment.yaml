@@ -75,8 +75,6 @@ spec:
 {{ if not $nogfs }}
         - name: gfshome # 与下面volumes的名字对应
           mountPath: /gfshome # 本地的挂载点
-        - name: gfshare # 与下面volumes的名字对应
-          mountPath: /share # 本地的挂载点
         - name: ssdshare # 与下面volumes的名字对应
           mountPath: /ssdshare # 本地的挂载点
 {{ end }}
@@ -105,9 +103,6 @@ spec:
       - name: gfshome
         persistentVolumeClaim:
           claimName: gfs-sata-pvc-{{ $namespace }}
-      - name: gfshare
-        persistentVolumeClaim:
-          claimName: gfs-sata-pvc-share-{{ $namespace }}
       - name: ssdshare
         persistentVolumeClaim:
           claimName: gfs-nvme-pvc-share-{{ $namespace }}

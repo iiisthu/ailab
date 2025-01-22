@@ -1,0 +1,15 @@
+# Template values for userchart.  DO NOT Edit.  Instead, make a copy and edit the copy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+########### 必须要写的部分 ###########
+EMAIL: $EMAIL
+NameSpace: $NAMESPACE   # 自己的namespace （同用户名）
+BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
+ContainerImage: harbor.ai.iiis.co:9443/share/pytorch/pytorch:2.1.1-cuda12.1-cudnn8-runtime-ssh   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
+Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+ CPU: 8
+ memory: 16Gi
+ GPU: 0
+UIDD: $UIDD
+GIDD: $GIDD
