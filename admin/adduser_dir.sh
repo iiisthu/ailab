@@ -7,7 +7,7 @@ do
     echo "username : $username"	
     
     yamlfile=`cat ./values-template.yaml`
-    all_variables="NAMESPACE=$username EMAIL=$(echo "$EMAIL" | tr -d '\r') UIDD=$(echo "$UIDD" | tr -d '\r') GIDD=$(echo "$GIDD" | tr -d '\r')"
+    all_variables="NAMESPACE=$username"
     
     if [ ! -d "./yamls/" ];then
         mkdir ./yamls

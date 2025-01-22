@@ -26,3 +26,5 @@ ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 
 # IngressHost: lab2.ai.iiis.co
 # Command: '["python", "/app/app_class1.py"]'
 # Args: ''
+# UseIB: true # 是否使用IB，默认不使用，如果使用，需要在启动时指定UseIB=true
+# nogfs: true
