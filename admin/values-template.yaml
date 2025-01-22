@@ -7,9 +7,25 @@ EMAIL: $EMAIL
 NameSpace: $NAMESPACE   # 自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
 ContainerImage: harbor.ai.iiis.co:9443/share/pytorch/pytorch:2.1.1-cuda12.1-cudnn8-runtime-ssh   # 镜像名称，默认为 harbor.ai.iiis.co/xuw/pytorch:v1.1，或者见README的说明
-Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
- CPU: 8
- memory: 16Gi
- GPU: 0
-UIDD: $UIDD
-GIDD: $GIDD
+
+########### 选填的部分 ###########
+# DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
+# Label: pytorch-release              # 任务的标签，默认为`BaseName-ReleaseName`
+# ContainerName: pytorch-release      # 容器名，默认为`BaseName-ReleaseName`
+# NVMEStorage: 100G                   # 申请的本地盘/scratch的大小，不填即为默认值
+# Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+#  CPU: 8
+#  memory: 16Gi
+#  GPU: 0
+# UseShm: False
+# ShmSize: 8Gi
+
+# Replicas: 1     # starting more replica of the pod (for distributed training)
+
+########### 高级配置 ###########
+# ExtraPort: 7860
+# IngressHost: lab2.ai.iiis.co
+# Command: '["python", "/app/app_class1.py"]'
+# Args: ''
+# UseIB: true # 是否使用IB，默认不使用，如果使用，需要在启动时指定UseIB=true
+# nogfs: true
