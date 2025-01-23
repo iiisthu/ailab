@@ -12,4 +12,5 @@ spec:
     requests.memory: 500Gi
     requests.nvidia.com/gpu: '4'
     requests.storage: 40T
+    count/pods: '10'
 

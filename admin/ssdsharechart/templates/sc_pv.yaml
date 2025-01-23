@@ -2,12 +2,12 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: gfs-sata-pvc-{{ .Values.NameSpace }} # 修改用户名
+  name: gfs-nvme-pvc-share-{{ .Values.NameSpace }} # 修改用户名
   namespace: {{ .Values.NameSpace }} # 修改命名空间
 spec:
-  storageClassName: kadalu.gfs-sata-users
+  storageClassName: kadalu.gfs-nvme-share
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 10T  # 申请的资源大小
+      storage: 1T # 与上面PV保持一致避免浪费

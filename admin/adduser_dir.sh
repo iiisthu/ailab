@@ -1,38 +1,50 @@
 #!/bin/bash
 
-kubectl apply -f ./cluster_setting
-
 while IFS=, read USER EMAIL UIDD GIDD
 do
-  if [ -n "$(echo "$USER" | tr -d '\r')" ]; then
-    echo "username : $(echo "$USER" | tr -d '\r')"	
-
-    parallel-ssh -H n02 mkdir -p /gfs-sata/$(echo "$USER" | tr -d '\r')
+  username=$(echo "$USER" | tr -d '\r')
+  if [ -n "$username" ]; then
+    echo "username : $username"	
     
-    yamlfile=`cat ../values-template.yaml`
-    all_variables="NAMESPACE=$(echo "$USER" | tr -d '\r') EMAIL=$(echo "$EMAIL" | tr -d '\r') UIDD=$(echo "$UIDD" | tr -d '\r') GIDD=$(echo "$GIDD" | tr -d '\r')"
+    yamlfile=`cat ./values-template.yaml`
+    all_variables="NAMESPACE=$username"
     
     if [ ! -d "./yamls/" ];then
         mkdir ./yamls
     fi
-    printf "$all_variables\ncat << EOF\n$yamlfile\nEOF" | bash > ./yamls/values_$(echo "$USER" | tr -d '\r').yaml
+    printf "$all_variables\ncat << EOF\n$yamlfile\nEOF" | bash > ./yamls/values_$username.yaml
 
-    helm install admin-$(echo "$USER" | tr -d '\r') \
-      --namespace=$(echo "$USER" | tr -d '\r') \
+    kubectl create namespace $username
+
+    helm install admin-$username \
+      --namespace=admin-helm \
       --create-namespace \
-      --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
+      --values ./yamls/values_$username.yaml \
       ./adminchart
-    sleep 10
-    helm install gfshome-$(echo "$USER" | tr -d '\r') \
-      --namespace=$(echo "$USER" | tr -d '\r') \
+
+    helm install gfshome-$username \
+      --namespace=admin-helm \
       --create-namespace \
-      --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
+      --values ./yamls/values_$username.yaml \
       ./gfshomechart
     
-    helm install user-$(echo "$USER" | tr -d '\r') \
-      --namespace=$(echo "$USER" | tr -d '\r') \
-      --values ./yamls/values_$(echo "$USER" | tr -d '\r').yaml \
-      ../user/userchart
-    sleep 20
+    helm install ssdshare-$username \
+      --namespace=admin-helm \
+      --create-namespace \
+      --values ./yamls/values_$username.yaml \
+      ./ssdsharechart
+    
+    testuser=$(helm install testuser-$username \
+      --namespace=$username \
+      --values ./yamls/values_$username.yaml \
+      ../user/userchart)
+
+    if [[ ($testuser =~ $username)  && ($testuser =~ "deployed")]]
+    then
+        echo "成功 创建用户 $username"
+    else
+        echo "失败 创建用户 $username"
+    fi
+
   fi
 done < $1

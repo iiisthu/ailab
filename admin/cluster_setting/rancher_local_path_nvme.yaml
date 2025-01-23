@@ -88,7 +88,7 @@ spec:
       serviceAccountName: local-path-provisioner-service-account
       containers:
         - name: local-path-provisioner
-          image: rancher/local-path-provisioner:v0.0.26
+          image: harbor.ai.iiis.co:9443/deploy/docker.io/rancher/local-path-provisioner:v0.0.26
           imagePullPolicy: IfNotPresent
           command:
             - local-path-provisioner
@@ -130,7 +130,7 @@ data:
             "nodePathMap":[
             {
                     "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
-                    "paths":["/nvme1/local-path-provisioner","/nvme2/local-path-provisioner","/nvme3/local-path-provisioner","/nvme4/local-path-provisioner"]
+                    "paths":["/nvme1/local-path-provisioner","/nvme2/local-path-provisioner"]
             }
             ]
     }
@@ -155,5 +155,5 @@ data:
           effect: NoSchedule
       containers:
       - name: helper-pod
-        image: busybox
+        image: harbor.ai.iiis.co:9443/deploy/docker.io/library/busybox:latest
         imagePullPolicy: IfNotPresent
