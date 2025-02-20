@@ -1,0 +1,13 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: gfs-sata-share-pvc-{{ .Values.NameSpace }} # 修改用户名
+  namespace: {{ .Values.NameSpace }} # 修改命名空间
+spec:
+  storageClassName: kadalu.gfs-sata-share
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10T  # 申请的资源大小

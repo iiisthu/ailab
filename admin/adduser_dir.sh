@@ -7,7 +7,7 @@ do
     echo "username : $username"	
     
     yamlfile=`cat ./values-template.yaml`
-    all_variables="NAMESPACE=$username"
+    all_variables="NAMESPACE=$username EMAIL=$(echo "$EMAIL" | tr -d '\r')"
     
     if [ ! -d "./yamls/" ];then
         mkdir ./yamls
@@ -27,6 +27,12 @@ do
       --create-namespace \
       --values ./yamls/values_$username.yaml \
       ./gfshomechart
+
+    helm install gfsshare-$username \
+      --namespace=admin-helm \
+      --create-namespace \
+      --values ./yamls/values_$username.yaml \
+      ./gfssharechart
     
     helm install ssdshare-$username \
       --namespace=admin-helm \
@@ -34,10 +40,10 @@ do
       --values ./yamls/values_$username.yaml \
       ./ssdsharechart
     
-    testuser=$(helm install testuser-$username \
-      --namespace=$username \
-      --values ./yamls/values_$username.yaml \
-      ../user/userchart)
+     testuser=$(helm install testuser-$username \
+       --namespace=$username \
+       --values ./yamls/values_$username.yaml \
+       ../user/userchart)
 
     if [[ ($testuser =~ $username)  && ($testuser =~ "deployed")]]
     then
