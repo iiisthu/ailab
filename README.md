@@ -20,7 +20,7 @@
 
 ## 集群概况
 
-本集群计算环境基于 K8S 搭建而成，硬件包括3台独立的 master 节点、28台 worker 节点和一台提供 NFS 服务的 NAS（网络存储服务器）。使用 Harbor 搭建私有镜像仓库，openLDAP 进行统一身份认证。通过统一的 kubeconfig 配置文件分发平台，用户也可以通过 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 以命令行的方式使用K8S集群。
+本集群计算环境基于 K8S 搭建而成，硬件包括3台独立的 master 节点、50台 worker 节点和一台提供 NFS 服务的 NAS（网络存储服务器）。使用 Harbor 搭建私有镜像仓库，openLDAP 进行统一身份认证。通过统一的 kubeconfig 配置文件分发平台，用户也可以通过 [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 以命令行的方式使用K8S集群。
 
 
 |系统|登陆地址|功能|
@@ -122,7 +122,7 @@ kubectl get pvc
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor.ai.iiis.co:9443/xuw/pytorch:v1.5   # 镜像名称，默认为 harbor.ai.iiis.co:9443/xuw/pytorch:v1.5，或者见README的说明
+ContainerImage: harbor-local.ai.iiis.co/xuw/pytorch:v1.5   # 镜像名称，默认为 harbor-local.ai.iiis.co/xuw/pytorch:v1.5，或者见README的说明
 
 ########### 选填的部分 ###########
 # DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
@@ -162,7 +162,8 @@ kubectl exec -i name_of_the_pod -- bash
 
 - 挂载于容器内`/root`路径的NFS服务的PVC，用于存储文档及代码等小文件；
 - 挂载于容器内`/gfshome`路径GFS的个人存储空间PVC，用于存储模型文件、数据集等大文件；
-- 挂载于容器内`/ssdshare`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；存储需要快速访问的模型文件等大文件；
+- 挂载于容器内`/share`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；
+- 挂载于容器内`/ssdshare`路径GFS的共享空间PVC，用于存储需要快速访问的模型文件等大文件（与share的区别为：该空间用SSD做存储，速度快）；
 
 临时数据存放在宿主机本地的NVME硬盘中，挂载在容器内的`/scratch1`和`/scratch2`，PVC被删除后里面的数据也会被删除，请一定不要将需要持久化保存的重要数据放在这几个路径。
 
@@ -248,6 +249,8 @@ helm delete 命令会自动删除容器和应于`/scratch1`至`/scratch4`的四�
 这样将会自动连接一个 VS Code 远程窗口，之后的开发就和本地类似了。
 
 ### 私有容器镜像仓库
+
+私有容器镜像仓库对应2个域名，分别为harbor.ai.iiis.co:9443(应用场景：用户通过外网向镜像仓库中推送自定义镜像) 和 harbor-local.ai.iiis.co（应用场景：用户建立POD时，从镜像仓库中拉取镜像）。二者区别为 harbor.ai.iiis.co:9443用于外网访问镜像仓库，harbor-local.ai.iiis.co走集群内部网络，建立pod时，基于该域名拉取镜像速度快。
 
 #### 自定义镜像
 
