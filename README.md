@@ -42,7 +42,7 @@
   
  - 在您使用的终端上执行如下命令：
 ```bash
-   ssh -i 私钥文件名  -N -L 6443:10.1.0.217:6443 ailab@js.ai.iiis.co -p 9022
+   ssh -i 私钥文件名  -N -L 6443:api.ai.iiis.co:6443 ailab@js.ai.iiis.co -p 9022
 ```
 私钥文件名默认为~/.ssh/id_rsa (可以省略）
  - 如果终端上6443端口已经被其他程序占用，可以换成其他端口，比如换成6444端口，则命令应写成：
@@ -89,7 +89,7 @@ https://helm.sh/docs/intro/install/#from-script
 
 ![](assets/dex_token_1.png)
 
-接下来，要按照页面指示的顺序在您运行 kubectl 的命令行运行命令。
+接下来，要按照页面指示的顺序在运行 kubectl 的命令行运行命令，会生成名为config的配置文件。
 
 >注：如果你用的是Windows机器，请在Windows Power Shell 下运行这些命令，普通的cmd不识别这种格式的环境变量。
 
@@ -102,15 +102,14 @@ https://helm.sh/docs/intro/install/#from-script
 ```bash
 kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
-- 修改所获得的kubeconfig文件，把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8443。 (或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8443)
-- 提示：如果连接SSH跳板机时，本地终端使用的端口不是8443，而是其他端口，比如8444，则需要把文件内容中的server: https://api.ai.iiis.co:8443 修改成server: https://127.0.0.1:8444。(或者把server: https://api.ai.iiis.co:8443注释掉，另加一行server: https://127.0.0.1:8444)
+- 提示：如果连接SSH跳板机时，本地终端使用的端口不是6443，而是其他端口，比如6444，则需要把config文件内容中的server: https://127.0.0.1:6443 修改成server: https://127.0.0.1:6444。
 
 之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
 
 ```bash
 kubectl get pvc
 ```
-应该能看到返回了3个或7个PVC （是用户在集群中可以访问的存储空间，可以理解为是一个盘）。
+应该能看到返回了4个PVC （是用户在集群中可以访问的存储空间，可以理解为是一个盘）。
 
 ## 使用K8S
 
@@ -158,14 +157,14 @@ kubectl exec -i name_of_the_pod -- bash
 
 ### 默认挂载的存储描述
 
-在默认的模板中，自动为每个pod默认挂载了三个存储卷。这些存储卷是管理员为用户创建好了用于长期保存数据的[持久卷申领（PersistentVolumeClaim，PVC）](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/)。
+在默认的模板中，自动为每个pod默认挂载了四个存储卷。这些存储卷是管理员为用户创建好了用于长期保存数据的[持久卷申领（PersistentVolumeClaim，PVC）](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/)。
 
 - 挂载于容器内`/root`路径的NFS服务的PVC，用于存储文档及代码等小文件；
 - 挂载于容器内`/gfshome`路径GFS的个人存储空间PVC，用于存储模型文件、数据集等大文件；
 - 挂载于容器内`/share`路径GFS的共享空间PVC，用于存放和共享开源大模型、开源数据集等公共数据；
 - 挂载于容器内`/ssdshare`路径GFS的共享空间PVC，用于存储需要快速访问的模型文件等大文件（与share的区别为：该空间用SSD做存储，速度快）；
 
-临时数据存放在宿主机本地的NVME硬盘中，挂载在容器内的`/scratch1`和`/scratch2`，PVC被删除后里面的数据也会被删除，请一定不要将需要持久化保存的重要数据放在这几个路径。
+临时数据存放在宿主机本地的NVME硬盘中，挂载在容器内的`/scratch1`和`/scratch2`，POD被删除后，这2个目录里面的数据也会被删除，请一定不要将需要持久化保存的重要数据放在这2个路径。
 
 上面的helm模板中会自动挂载长期存储数据的四个PVC，并自动创建对应于`/scratch1`和`/scratch2`两个临时数据存储PVC。
 
@@ -388,3 +387,5 @@ docker push harbor.ai.iiis.co:9443/zhangsan/sample:v0
 ```
 
 创建好镜像后，拉起 Pod 流程和标准镜像一样。
+
+提示：建立Pod时，values-template.yaml模板中，指定容器镜像字段ContainerImage处，需要修改镜像仓库对应的域名为harbor-local.ai.iiis.co，可以提高镜像拉取速度，请参见本文档“使用默认配置启动计算任务”部分。
