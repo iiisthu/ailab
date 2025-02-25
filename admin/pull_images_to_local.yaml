@@ -15,7 +15,7 @@ spec:
       initContainers:
         - name: prepuller-1
           # Set the image you want to pull
-          image: harbor.ai.iiis.co/zbh/nvcr.io/nvidia/pytorch:21.10-lab
+          image: harbor-local.ai.iiis.co/llm-course/lab:v2
           # Use a known command that will exit successfully immediately
           # Any no-op command will do but YMMV with scratch based containers
           command: ["sh", "-c", "'true'"]
