@@ -4,7 +4,7 @@
    - **问题**: 复制粘贴 kubeconfig 配置时出现问题，如何解决？
    - **解决**: 
    确保在复制时没有破坏格式，尤其是 server 部分。可以重新运行 login.ai 网站上的命令，并检查生成的 `.crt` 文件是否存在，确保没有损坏。
-   重新生成配置文件的步骤如下：
+   重新生成配置文件的步骤如下（详细步骤请参考[README](README.md#配置kubeconfig)）：
      1. 打开浏览器并访问 https://login.ai.iiis.co:9443。
      2. 使用您的邮箱地址（格式为：用户名@iiis.co）和密码登录。
      3. 登录后，进入 kubeconfig 信息页面，选择您使用的系统类型。
@@ -23,7 +23,7 @@
 #### 3. **GPU 配置问题**
    - **问题**: 如何确保在 Kubernetes 中正确配置和使用 GPU？
    - **解决**: 在 YAML 文件中确保 GPU 配置正确，并通过 `nvidia-smi` 检查 GPU 是否可用。
-   如果使用 Helm 创建 Pod，请确保在 `values.yaml` 文件中正确配置以下 GPU 选项：
+   如果使用 Helm 创建 Pod，请确保在 `values.yaml` 文件中正确配置以下 GPU 选项（详细步骤请参考[README](README.md#使用默认配置启动计算任务)）：
      1. `GPU`: 设置所需的 GPU 类型，例如 `RTX4090`、`RTX4090D` 或 `RTX3090`。
      2. `Limits.GPU`: 设置 GPU 的数量，确保不超过集群的配额。
    配置完成后，重新安装 Helm 部署。重新安装的命令如下：
