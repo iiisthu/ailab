@@ -121,7 +121,7 @@ kubectl get pvc
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor-local.ai.iiis.co/llm-course/lab:v2   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab:v2
+ContainerImage: harbor-local.ai.iiis.co/llm-course/lab-cpu:v2   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:v2
 GPU: RTX4090D # RTX4090D RTX4090 RTX3090
 
 ########### 选填的部分 ###########
