@@ -5,7 +5,7 @@
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor-local.ai.iiis.co/llm-course/lab-cpu:v2   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:v2，或者见README的说明
+ContainerImage: harbor-local.ai.iiis.co/llm-course/lab-cpu:latest   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:latest，或者见README的说明
 GPU: RTX4090 # 可选的包括： RTX4090D RTX4090 RTX3090， 其中RTX4090D的显存为48G，RTX4090的显存为24G，RTX3090的显存为24G
 
 ########### 选填的部分 ###########
