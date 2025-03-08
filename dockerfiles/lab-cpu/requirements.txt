@@ -17,6 +17,10 @@ ipywidgets
 langchain
 langchain-openai
 langchainhub
+langchain_experimental
+langchain_core
+langchain_community
+langchain_unstructured
 langgraph
 google-search-results
 lxml
@@ -57,6 +61,7 @@ langchain_chroma
 asyncer
 neo4j
 yfiles_jupyter_graphs
+httpx[socks]
 
 # git clone --depth 1 https://github.com/hiyouga/LLaMA-Factory.git
 # cd LLaMA-Factory
