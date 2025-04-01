@@ -16,7 +16,8 @@ spec:
         - name: prepuller-1
           # Set the image you want to pull
           #image: harbor-local.ai.iiis.co/llm-course/lab:v2
-          image: harbor.ai.iiis.co:9443/llm-course/lab-cpu:v2
+          #image: harbor.ai.iiis.co:9443/llm-course/lab:v2
+          image: harbor-local.ai.iiis.co/llm-course/lab5:v4
           # Use a known command that will exit successfully immediately
           # Any no-op command will do but YMMV with scratch based containers
           command: ["sh", "-c", "'true'"]
