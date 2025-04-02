@@ -4,9 +4,9 @@
 
 ########### 必须要写的部分 ###########
 NameSpace: namespace   # 自己的namespace （同用户名）
-BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor.ai.iiis.co:9443/llm-course/sdwebui:v1   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:latest，或者见README的说明
-GPU: RTX4090D # 可选的包括： RTX4090D RTX4090 RTX3090， 其中RTX4090D的显存为48G，RTX4090的显存为24G，RTX3090的显存为24G
+BaseName: sdwebui   # 任务的基本名字，建议写任务描述，例如pytorch
+ContainerImage: harbor-local.ai.iiis.co/llm-course/sdwebui:v1   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:latest，或者见README的说明
+GPU: RTX4090 # 可选的包括： RTX4090D RTX4090 RTX3090， 其中RTX4090D的显存为48G，RTX4090的显存为24G，RTX3090的显存为24G
 
 ########### 选填的部分 ###########
 # DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
@@ -24,7 +24,7 @@ Limits:             # 申请的资源，注意所有启动的资源总和不能�
 
 ########### 高级配置 ###########
 ExtraPort: 7860
-IngressHost: sdwebui.ai.iiis.co
+#IngressHost: sdwebui.ai.iiis.co
 Command: '["bash", "/sd-repo/run.sh"]'
 # Args: ''
 # UseIB: true # 是否使用IB，默认不使用，如果使用，需要在启动时指定UseIB=true
