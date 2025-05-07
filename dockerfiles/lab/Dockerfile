@@ -32,7 +32,7 @@ deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe m
 EOF
 
 RUN apt-get update && \
-    apt-get install -y openssh-server vim curl wget git iputils-ping net-tools git-lfs man-db zsh poppler-utils tesseract-ocr libgl1 tmux && \
+    apt-get install -y openssh-server vim curl wget git iputils-ping net-tools git-lfs man-db zsh poppler-utils tesseract-ocr libgl1 tmux ffmpeg && \
     pip config set global.index-url https://mirrors.cernet.edu.cn/pypi/web/simple && \
     pip config set global.trusted-host mirrors.cernet.edu.cn && \
     apt-get clean && rm -rf /tmp/* && \
@@ -47,9 +47,8 @@ RUN pip install -r requirements.txt && \
     pip install flash-attn --no-build-isolation
 
 RUN pip install vllm
-RUN pip install -U flash-attn --no-build-isolation
 RUN pip install flashinfer-python -i https://flashinfer.ai/whl/cu126/torch2.6/
-RUN pip install evaluate rouge_score bitsandbytes transformers=4.47.0 datasets
+RUN pip install -v flash-attn==2.7.4.post1 --no-build-isolation
 WORKDIR /root
 
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]

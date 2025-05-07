@@ -70,3 +70,6 @@ opencv-python-headless
 langchain_pinecone
 langchain_chroma
 asyncer
+evaluate
+rouge_score
+bitsandbytes 
