@@ -44,16 +44,20 @@
 ```bash
    ssh -i 私钥文件名  -N -L 6443:api.ai.iiis.co:6443 ailab@js.ai.iiis.co -p 9022
 ```
-私钥文件名默认为~/.ssh/id_rsa (可以省略）
+ - 私钥文件名默认为~/.ssh/id_rsa (可以省略）：
+```bash
+  ssh -N -L 6443:api.ai.iiis.co:6443 ailab@js.ai.iiis.co -p 9022
+```
+
  - 如果终端上6443端口已经被其他程序占用，可以换成其他端口，比如换成6444端口，则命令应写成：
 ```bash
   ssh -i 私钥文件名  -N -L 6444:api.ai.iiis.co:6443 ailab@js.ai.iiis.co -p 9022
 ```
- - 命令执行后，会出现貌似“卡死”现象（命令并不返回），这是正常的。不要关闭该terminal。可以另打开一个terminal进行其他操作。也可以在上述ssh命令的最后加上&，将放入后台。
+ - 命令执行后，会出现貌似“卡死”现象（命令并不返回），这是正常的。**不要关闭**该terminal。可以另打开一个terminal进行其他操作。也可以在上述ssh命令的最后加上&，将放入后台。
  - 如果您希望自动连接跳板机，可以参考autossh (https://www.harding.motd.ca/autossh/)
   
 ## 配置集群访问环境
-
+>注：不推荐使用wsl。在wsl上执行可能在后续步骤中出现WebSocket close with status code 1006错误
 ### 安装本地软件
 
 本地电脑至少需要安装以下两个软件。
@@ -75,7 +79,7 @@ https://helm.sh/docs/intro/install/#from-script
 
 用户基于 kubeconfig 通过命令行方式使用K8S，需要先在自己的终端设备配置好 kubeconfig。利用系统提供的 kubeconfig 信息（包含用户账户和 Token 等信息），可以在自己的终端利用 kubectl 对 K8S 集群中的资源进行访问。本节介绍如何获取和使用 kubeconfig。
 
-用浏览器访问URL地址：https://login.ai.iiis.co:9443，会进入Login界面：
+用浏览器访问URL地址：https://login.ai.iiis.co:9443
 
 ![](assets/dex_login.png)
 
@@ -91,9 +95,24 @@ https://helm.sh/docs/intro/install/#from-script
 
 接下来，要按照页面指示的顺序在运行 kubectl 的命令行运行命令，会生成名为config的配置文件。
 
->注：如果你用的是Windows机器，请在Windows Power Shell 下运行这些命令，普通的cmd不识别这种格式的环境变量。
+>注：如果你用的是Windows机器，请在Windows Power Shell 下运行这些命令；如果无法执行网站中的第一条命令，可以执行如下命令：
 
-可以点击每条命令右上的复制图标来将命令复制到粘贴板。
+```bash
+$homeDir = $env:USERPROFILE
+$certDir = Join-Path $homeDir ".kube\certs\k8s.iiis"
+New-Item -ItemType Directory -Path $certDir -Force | Out-Null
+
+$certPath = Join-Path $certDir "k8s-ca.crt"
+
+@"
+-----BEGIN CERTIFICATE-----
+
+(此处粘贴你自己的certificate）
+
+-----END CERTIFICATE-----
+"@ | Out-File -FilePath $certPath -Encoding ascii
+
+```
 
 ![](assets/dex_token_2.png)
 
@@ -102,6 +121,15 @@ https://helm.sh/docs/intro/install/#from-script
 ```bash
 kubectl config set-context --current --namespace=`kubectl config current-context | cut -d'-' -f 1` 
 ```
+
+>注：如果你用的是Windows机器，请运行如下命令（powershell不支持cut）
+
+```bash
+kubectl config set-context --current --namespace=($((kubectl config current-context) -split '-')[0])
+```
+
+>注：请检查你的UID中是否有`-`。如果有，第一个`-`符号后的内容会自动被上述指令去掉，导致后续步骤出现了类似 `Error from server (Forbidden)` 的报错。请浏览并手动编辑kubeconfig文件
+
 - 提示：如果连接SSH跳板机时，本地终端使用的端口不是6443，而是其他端口，比如6444，则需要把config文件内容中的server: https://127.0.0.1:6443 修改成server: https://127.0.0.1:6444。
 
 之后可以使用以下 kubectl 命令测试是否已经可以访问K8S中的资源。
@@ -115,11 +143,11 @@ kubectl get pvc
 
 ### 使用默认配置启动计算任务
 
-本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，只需要将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用helm创建计算任务。 user/values-template.yaml 文件的具体内容为：
+本仓库已经为用户提供了创建计算任务的默认 helm 模板，如果使用默认配置，请 clone 本仓库，并将 user/values.yaml 文件中的内容按照自己账号和计算需求进行修改，即可使用 helm 创建计算任务。 user/values-template.yaml 文件的具体内容为：
 
 ```
 ########### 必须要写的部分 ###########
-NameSpace: namespace   # 自己的namespace （同用户名）
+NameSpace: namespace   # 更改为自己的namespace （同用户名）
 BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
 ContainerImage: harbor-local.ai.iiis.co/llm-course/lab-cpu:v2   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:v2
 GPU: RTX4090D # RTX4090D RTX4090 RTX3090
@@ -232,7 +260,7 @@ helm delete 命令会自动删除容器和应于`/scratch1`至`/scratch4`的四�
 
 使用 [VS Code](https://code.visualstudio.com/) 可以远程 debug 集群中创建的 POD。这里我们给出一个简单的教程，更多的信息请自行查阅 [Kubernetes 文档](https://kubernetes.io/zh/docs/concepts/services-networking/service/)与 [VS Code 文档](https://code.visualstudio.com/docs/azure/kubernetes)。
 
-首先我们需要在 VS Code 中安装`Kubernetes`插件、`Docker`插件、`Remote Container`插件、`Bridge to Kubernetes`插件：
+首先我们需要在 VS Code 中安装`Kubernetes`插件、`Docker`插件、`Remote Container`插件（改名为`Dev container`）、`Bridge to Kubernetes`插件（被弃用，但不影响使用）：
 
 ![](assets/vscode/vsc_k8s_plugin.jpg)
 
