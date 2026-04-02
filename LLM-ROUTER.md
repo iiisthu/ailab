@@ -125,7 +125,7 @@ codex
 或者在`~/.codex/config.toml`和`~/.codex/auth.json`中配置：
 
 ```json
-// 对于`~/.codex/config.toml`添加一行：
+// 对于`~/.codex/config.toml`添加到首行，覆盖默认的openai_base_url：
 openai_base_url = "https://router.ai.iiis.co:9443/v1"
 
 // 对于~/.codex/auth.json添加一项：
@@ -136,6 +136,9 @@ openai_base_url = "https://router.ai.iiis.co:9443/v1"
 
 // 启动命令
 codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
+
+// 切换模型
+/model YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
 ```
 
 **可用模型：** `aws/gpt-5.4`、`aws/gpt-5.2`、`aws/gpt-5-codex` 等。
