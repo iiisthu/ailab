@@ -140,6 +140,8 @@ openai_base_url = "https://router.ai.iiis.co:9443/v1"
 }
 ```
 
+然后启动Codex。
+
 **可用模型：** `aws/gpt-5.4`、`aws/gpt-5.2`、`aws/gpt-5-codex` 等。
 
 **切换模型**
