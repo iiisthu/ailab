@@ -119,16 +119,21 @@ export OPENAI_BASE_URL="https://router.ai.iiis.co:9443/v1"
 export OPENAI_API_KEY="sk-你的API-Key"
 
 # 启动 Codex
-codex
+codex 或
+codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
 ```
 
 或者在`~/.codex/config.toml`和`~/.codex/auth.json`中配置：
 
-```json
-// 对于`~/.codex/config.toml`添加到首行，覆盖默认的openai_base_url：
-openai_base_url = "https://router.ai.iiis.co:9443/v1"
+- 对于`~/.codex/config.toml`添加到首行，覆盖默认的openai_base_url：
 
-// 对于~/.codex/auth.json添加一项：
+```bash
+openai_base_url = "https://router.ai.iiis.co:9443/v1"
+```
+
+- 对于~/.codex/auth.json添加一项：
+
+```json
 {
   "auth_mode": "apikey",
   "OPENAI_API_KEY": "sk-你的API-Key"
@@ -136,12 +141,6 @@ openai_base_url = "https://router.ai.iiis.co:9443/v1"
 ```
 
 **可用模型：** `aws/gpt-5.4`、`aws/gpt-5.2`、`aws/gpt-5-codex` 等。
-
-**启动命令**
-
-```bash
-codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
-```
 
 **切换模型**
 
