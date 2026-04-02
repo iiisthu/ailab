@@ -94,6 +94,14 @@ claude
 }
 ```
 
+> 如果在启动Claude Code时遇到下面的错误提示：
+>
+> "Unable to connect to Anthropic services"
+>
+> "Failed to connect to api.anthropic.com: ERR_BAD_REQUEST"
+>
+> 则需要在~/.claude目录下新建`.claude.json`文件，并添加一行`"hasCompletedOnboarding": true`
+
 **可用模型：** `aws/claude-sonnet-4-6`、`aws/claude-opus-4-6`、`aws/claude-haiku-4-5-20251001` 等。
 
 **切换模型：**
@@ -112,6 +120,22 @@ export OPENAI_API_KEY="sk-你的API-Key"
 
 # 启动 Codex
 codex
+```
+
+或者在`~/.codex/config.toml`和`~/.codex/auth.json`中配置：
+
+```json
+// 对于`~/.codex/config.toml`添加一行：
+openai_base_url = "https://router.ai.iiis.co:9443/v1"
+
+// 对于~/.codex/auth.json添加一项：
+{
+  "auth_mode": "apikey",
+  "OPENAI_API_KEY": "sk-你的API-Key"
+}
+
+// 启动命令
+codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
 ```
 
 **可用模型：** `aws/gpt-5.4`、`aws/gpt-5.2`、`aws/gpt-5-codex` 等。
