@@ -133,15 +133,21 @@ openai_base_url = "https://router.ai.iiis.co:9443/v1"
   "auth_mode": "apikey",
   "OPENAI_API_KEY": "sk-你的API-Key"
 }
-
-// 启动命令
-codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
-
-// 切换模型
-/model YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
 ```
 
 **可用模型：** `aws/gpt-5.4`、`aws/gpt-5.2`、`aws/gpt-5-codex` 等。
+
+**启动命令**
+
+```bash
+codex -m YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
+```
+
+**切换模型**
+
+```bash
+/model YOUR_MODEL (aws/gpt-5.4, aws/gpt-5.2, aws/gpt-5-codex)
+```
 
 ### 3.3 Cursor
 
