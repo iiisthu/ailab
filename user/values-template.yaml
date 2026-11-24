@@ -3,29 +3,35 @@
 # Declare variables to be passed into your templates.
 
 ########### 必须要写的部分 ###########
-NameSpace: namespace   # 自己的namespace （同用户名）
-BaseName: pytorch   # 任务的基本名字，建议写任务描述，例如pytorch
-ContainerImage: harbor-local.ai.iiis.co/llm-course/lab-cpu:latest   # 镜像名称，默认为 harbor-local.ai.iiis.co/llm-course/lab-cpu:latest，或者见README的说明
-GPU: RTX4090 # 可选的包括： RTX4090D RTX4090 RTX3090， 其中RTX4090D的显存为48G，RTX4090的显存为24G，RTX3090的显存为24G
-
-########### 选填的部分 ###########
+NameSpace: XXX   # 自己的namespace名 （如果用户名为XXX@iiis.co，则namespace名为XXX）
+BaseName: devimg   # 任务的基本名字，建议写任务描述，例如pytorch
+ContainerImage: harbor-local.ai.iiis.co/xuw/devimg-base:260923e  # 镜像名称，默认为 harbor-local.ai.iiis.co/xuw/devimg-base:260923e，或者见README的说明
+GPU: RTX4090     #可选包括： RTX4090  RTX4090D  RTX3090，其中RTX4090显存为24G；RTX4090D的显存为48G；RTX3090的显存为24G
+Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
+  CPU: 8
+  memory: 16Gi
+  GPU: 0
+ 
+########### 选填的部分   ###########
 # DeployName: namespace-pytorch-release     # 任务（deployment）的名字，默认为`NameSpace-BaseName-ReleaseName`， releaseName为随机生成的字符串是在helm命令行里指定的
 # Label: pytorch-release              # 任务的标签，默认为`BaseName-ReleaseName`
 # ContainerName: pytorch-release      # 容器名，默认为`BaseName-ReleaseName`
 # NVMEStorage: 100G                   # 申请的本地盘/scratch的大小，不填即为默认值
-# Limits:             # 申请的资源，注意所有启动的资源总和不能超过自己ns的quota，如果增加quota，需要向管理员申请，不填为默认值
-#  CPU: 8
-#  memory: 16Gi
-#  GPU: 0
-# UseShm: False   # 多卡训练的时候有用
-# ShmSize: 8Gi    # 多卡训练的时候有用
+# UseShm: False                       # 多卡训练时有用
+# ShmSize: 8Gi                       # 多卡训练时有用
 
-# Replicas: 1     # starting more replica of the pod (for distributed training)
-
-########### 高级配置 ###########
+###########选填部分-- 高级配置 ###########
 # ExtraPort: 7860
 # IngressHost: lab2.ai.iiis.co
-# Command: '["python", "/app/app_class1.py"]'
+# Command: '["python","/app/app_class1.py"]'
 # Args: ''
-# UseIB: true # 是否使用IB，默认不使用，如果使用，需要在启动时指定UseIB=true
-# nogfs: true
+# nogfs：true
+#
+# ########### 选填部分--IB配置 ###########
+#UseIB: true   #是否使用IB，默认不使用，跨物理节点的pod之间通信，可以使用IB
+#IB:
+#  NetworkName: ipoibnetwork-XXX # 对应 XXX 命名空间中已存在的网络,如果用户名为XXX@iiis.co，则此处为XXX
+#  UseRDMA: true
+#  ResourceName: rdma/rdma_shared_device_a
+#  HCA: "=mlx5_0:1"
+
